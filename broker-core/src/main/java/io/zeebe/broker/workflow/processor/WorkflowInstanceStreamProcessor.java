@@ -33,6 +33,7 @@ import io.zeebe.broker.subscription.message.state.WorkflowInstanceSubscriptionDa
 import io.zeebe.broker.workflow.index.ElementInstanceIndex;
 import io.zeebe.broker.workflow.map.WorkflowCache;
 import io.zeebe.broker.workflow.processor.deployment.DeploymentCreateProcessor;
+import io.zeebe.broker.workflow.processor.deployment.MessageStartEventDeploymentProcessor;
 import io.zeebe.broker.workflow.processor.deployment.TransformingDeploymentCreateProcessor;
 import io.zeebe.broker.workflow.processor.instance.CancelWorkflowInstanceProcessor;
 import io.zeebe.broker.workflow.processor.instance.CreateWorkflowInstanceEventProcessor;
@@ -46,6 +47,7 @@ import io.zeebe.broker.workflow.state.WorkflowRepositoryIndex;
 import io.zeebe.logstreams.processor.StreamProcessorContext;
 import io.zeebe.protocol.Protocol;
 import io.zeebe.protocol.clientapi.ValueType;
+import io.zeebe.protocol.intent.DeploymentIntent;
 import io.zeebe.protocol.intent.JobIntent;
 import io.zeebe.protocol.intent.WorkflowInstanceIntent;
 import io.zeebe.protocol.intent.WorkflowInstanceSubscriptionIntent;
@@ -205,6 +207,10 @@ public class WorkflowInstanceStreamProcessor implements StreamProcessorLifecycle
   private void addMessageStreamProcessors(
       final TypedEventStreamProcessorBuilder streamProcessorBuilder) {
     streamProcessorBuilder
+        .onEvent(
+            ValueType.DEPLOYMENT,
+            DeploymentIntent.CREATED,
+            new MessageStartEventDeploymentProcessor(workflowCache))
         .onCommand(
             ValueType.WORKFLOW_INSTANCE_SUBSCRIPTION,
             WorkflowInstanceSubscriptionIntent.OPEN,

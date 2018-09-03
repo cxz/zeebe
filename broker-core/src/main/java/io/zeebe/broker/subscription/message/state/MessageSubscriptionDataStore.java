@@ -49,7 +49,8 @@ public class MessageSubscriptionDataStore extends JsonSnapshotSupport<MessageSub
         .filter(
             m ->
                 m.getMessageName().equals(messageName)
-                    && m.getCorrelationKey().equals(correlationKey))
+                    && (m.isStartEventSubscription()
+                        || m.getCorrelationKey().equals(correlationKey)))
         .collect(Collectors.toList());
   }
 
@@ -92,6 +93,9 @@ public class MessageSubscriptionDataStore extends JsonSnapshotSupport<MessageSub
     private byte[] messagePayload;
     private long commandSentTime;
 
+    private boolean isStartEventSubscription;
+    private long workflowKey;
+
     /* required for json deserialization */
     public MessageSubscription() {}
 
@@ -106,6 +110,12 @@ public class MessageSubscriptionDataStore extends JsonSnapshotSupport<MessageSub
       this.activityInstanceKey = activityInstanceKey;
       this.messageName = messageName;
       this.correlationKey = correlationKey;
+    }
+
+    public MessageSubscription(long workflowKey, String messageName) {
+      this.isStartEventSubscription = true;
+      this.messageName = messageName;
+      this.workflowKey = workflowKey;
     }
 
     public int getWorkflowInstancePartitionId() {
@@ -192,6 +202,18 @@ public class MessageSubscriptionDataStore extends JsonSnapshotSupport<MessageSub
         return false;
       }
       return true;
+    }
+
+    public boolean isStartEventSubscription() {
+      return isStartEventSubscription;
+    }
+
+    public long getWorkflowKey() {
+      return workflowKey;
+    }
+
+    public void setStartEventSubscription(boolean isStartEventSubscription) {
+      this.isStartEventSubscription = isStartEventSubscription;
     }
   }
 }

@@ -17,19 +17,30 @@
  */
 package io.zeebe.broker.workflow.model;
 
-public class ExecutableFlowElementContainer extends ExecutableFlowNode {
+import org.agrona.DirectBuffer;
 
-  private ExecutableStartEvent startEvent;
+public class ExecutableStartEvent extends ExecutableFlowNode {
 
-  public ExecutableFlowElementContainer(String id) {
+  private boolean isMessageStartEvent;
+  private DirectBuffer messageName;
+
+  public ExecutableStartEvent(String id) {
     super(id);
   }
 
-  public ExecutableStartEvent getStartEvent() {
-    return startEvent;
+  public DirectBuffer getMessageName() {
+    return messageName;
   }
 
-  public void setStartEvent(ExecutableStartEvent startEvent) {
-    this.startEvent = startEvent;
+  public void setMessageName(DirectBuffer messageName) {
+    this.messageName = messageName;
+  }
+
+  public boolean isMessageStartEvent() {
+    return isMessageStartEvent;
+  }
+
+  public void setMessageStartEvent(boolean isMessageStartEvent) {
+    this.isMessageStartEvent = isMessageStartEvent;
   }
 }

@@ -35,7 +35,8 @@ public class ZeebeDesignTimeValidators {
     VALIDATORS.add(new SequenceFlowValidator());
     VALIDATORS.add(new ServiceTaskValidator());
     VALIDATORS.add(new ReceiveTaskValidator());
-    VALIDATORS.add(new StartEventValidator());
+    // TODO verify that the process has at least one start event
+    // VALIDATORS.add(new StartEventValidator());
     VALIDATORS.add(new IntermediateCatchEventValidator());
     VALIDATORS.add(new SubProcessValidator());
     VALIDATORS.add(new ZeebeTaskDefinitionValidator());

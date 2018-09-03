@@ -46,6 +46,14 @@ public class MessageDataStore extends JsonSnapshotSupport<MessageData> {
                     && m.getCorrelationKey().equals(message.getCorrelationKey()));
   }
 
+  public List<Message> findMessages(String name) {
+    return getData()
+        .getMessages()
+        .stream()
+        .filter(m -> m.getName().equals(name))
+        .collect(Collectors.toList());
+  }
+
   public Message findMessage(String name, String correlationKey) {
     return getData()
         .getMessages()

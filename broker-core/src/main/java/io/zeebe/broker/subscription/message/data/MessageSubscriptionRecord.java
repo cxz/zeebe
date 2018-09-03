@@ -26,18 +26,20 @@ import org.agrona.DirectBuffer;
 public class MessageSubscriptionRecord extends UnpackedObject {
 
   private final IntegerProperty workflowInstancePartitionIdProp =
-      new IntegerProperty("workflowInstancePartitionId");
-  private final LongProperty workflowInstanceKeyProp = new LongProperty("workflowInstanceKey");
-  private final LongProperty activityInstanceKeyProp = new LongProperty("activityInstanceKey");
+      new IntegerProperty("workflowInstancePartitionId", -1);
+  private final LongProperty workflowInstanceKeyProp = new LongProperty("workflowInstanceKey", -1L);
+  private final LongProperty activityInstanceKeyProp = new LongProperty("activityInstanceKey", -1L);
   private final StringProperty messageNameProp = new StringProperty("messageName");
-  private final StringProperty correlationKeyProp = new StringProperty("correlationKey");
+  private final StringProperty correlationKeyProp = new StringProperty("correlationKey", "");
+  private final LongProperty workflowKeyProp = new LongProperty("workflowKey", -1L);
 
   public MessageSubscriptionRecord() {
     this.declareProperty(workflowInstancePartitionIdProp)
         .declareProperty(workflowInstanceKeyProp)
         .declareProperty(activityInstanceKeyProp)
         .declareProperty(messageNameProp)
-        .declareProperty(correlationKeyProp);
+        .declareProperty(correlationKeyProp)
+        .declareProperty(workflowKeyProp);
   }
 
   public int getWorkflowInstancePartitionId() {
@@ -82,6 +84,15 @@ public class MessageSubscriptionRecord extends UnpackedObject {
 
   public MessageSubscriptionRecord setCorrelationKey(DirectBuffer correlationKey) {
     correlationKeyProp.setValue(correlationKey);
+    return this;
+  }
+
+  public long getWorkflowKey() {
+    return workflowKeyProp.getValue();
+  }
+
+  public MessageSubscriptionRecord setWorkflowKey(long workflowKey) {
+    workflowKeyProp.setValue(workflowKey);
     return this;
   }
 }

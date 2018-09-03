@@ -32,9 +32,11 @@ import io.zeebe.broker.subscription.message.state.MessageDataStore;
 import io.zeebe.broker.subscription.message.state.MessageDataStore.Message;
 import io.zeebe.broker.subscription.message.state.MessageSubscriptionDataStore;
 import io.zeebe.broker.subscription.message.state.MessageSubscriptionDataStore.MessageSubscription;
+import io.zeebe.broker.workflow.data.WorkflowInstanceRecord;
 import io.zeebe.logstreams.processor.EventLifecycleContext;
 import io.zeebe.protocol.clientapi.RejectionType;
 import io.zeebe.protocol.intent.MessageIntent;
+import io.zeebe.protocol.intent.WorkflowInstanceIntent;
 import io.zeebe.util.sched.clock.ActorClock;
 import java.util.List;
 import java.util.function.Consumer;
@@ -101,6 +103,20 @@ public class PublishMessageProcessor implements TypedRecordProcessor<MessageReco
 
       sideEffect.accept(this::correlateMessage);
 
+      // TODO create one instance per start event subscription
+      matchingSubscriptions
+          .stream()
+          .filter(MessageSubscription::isStartEventSubscription)
+          .forEach(
+              sub -> {
+                final WorkflowInstanceRecord workflowInstance = new WorkflowInstanceRecord();
+                workflowInstance
+                    .setWorkflowKey(sub.getWorkflowKey())
+                    .setPayload(messageRecord.getPayload());
+
+                batchWriter.addNewCommand(WorkflowInstanceIntent.CREATE, workflowInstance);
+              });
+
       if (messageRecord.getTimeToLive() > 0L) {
         message.setKey(key);
         messageStore.addMessage(message);
@@ -114,13 +130,17 @@ public class PublishMessageProcessor implements TypedRecordProcessor<MessageReco
 
   private boolean correlateMessage() {
     for (MessageSubscription sub : matchingSubscriptions) {
-      final boolean success =
-          commandSender.correlateWorkflowInstanceSubscription(
-              sub.getWorkflowInstancePartitionId(),
-              sub.getWorkflowInstanceKey(),
-              sub.getActivityInstanceKey(),
-              messageRecord.getName(),
-              messageRecord.getPayload());
+      boolean success = true;
+
+      if (!sub.isStartEventSubscription()) {
+        success =
+            commandSender.correlateWorkflowInstanceSubscription(
+                sub.getWorkflowInstancePartitionId(),
+                sub.getWorkflowInstanceKey(),
+                sub.getActivityInstanceKey(),
+                messageRecord.getName(),
+                messageRecord.getPayload());
+      }
 
       if (!success) {
         // try again later

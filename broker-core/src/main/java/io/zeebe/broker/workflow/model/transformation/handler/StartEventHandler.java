@@ -17,14 +17,20 @@
  */
 package io.zeebe.broker.workflow.model.transformation.handler;
 
+import static io.zeebe.util.buffer.BufferUtil.wrapString;
+
 import io.zeebe.broker.workflow.model.ExecutableFlowElementContainer;
 import io.zeebe.broker.workflow.model.ExecutableFlowNode;
+import io.zeebe.broker.workflow.model.ExecutableStartEvent;
 import io.zeebe.broker.workflow.model.ExecutableWorkflow;
 import io.zeebe.broker.workflow.model.transformation.ModelElementTransformer;
 import io.zeebe.broker.workflow.model.transformation.TransformContext;
+import io.zeebe.model.bpmn.instance.EventDefinition;
 import io.zeebe.model.bpmn.instance.FlowNode;
+import io.zeebe.model.bpmn.instance.MessageEventDefinition;
 import io.zeebe.model.bpmn.instance.StartEvent;
 import io.zeebe.protocol.intent.WorkflowInstanceIntent;
+import java.util.Optional;
 
 public class StartEventHandler implements ModelElementTransformer<StartEvent> {
 
@@ -36,8 +42,8 @@ public class StartEventHandler implements ModelElementTransformer<StartEvent> {
   @Override
   public void transform(StartEvent element, TransformContext context) {
     final ExecutableWorkflow workflow = context.getCurrentWorkflow();
-    final ExecutableFlowNode startEvent =
-        workflow.getElementById(element.getId(), ExecutableFlowNode.class);
+    final ExecutableStartEvent startEvent =
+        workflow.getElementById(element.getId(), ExecutableStartEvent.class);
 
     if (element.getScope() instanceof FlowNode) {
       final FlowNode scope = (FlowNode) element.getScope();
@@ -48,6 +54,20 @@ public class StartEventHandler implements ModelElementTransformer<StartEvent> {
     } else {
       // top-level start event
       workflow.setStartEvent(startEvent);
+
+      // TODO add support for multiple start events
+      final Optional<EventDefinition> messageEventDefinition =
+          element
+              .getEventDefinitions()
+              .stream()
+              .filter(e -> e instanceof MessageEventDefinition)
+              .findFirst();
+      if (messageEventDefinition.isPresent()) {
+        final String messageName =
+            ((MessageEventDefinition) messageEventDefinition.get()).getMessage().getName();
+        startEvent.setMessageStartEvent(true);
+        startEvent.setMessageName(wrapString(messageName));
+      }
     }
 
     bindLifecycle(context, startEvent);
