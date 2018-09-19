@@ -40,7 +40,6 @@
     <module>json-el</module>
     <module>json-path</module>
     <module>build-tools</module>
-    <module>githooks-plugin</module>
     <module>gateway-protocol</module>
     <module>gateway</module>
     <module>clients/java</module>
@@ -48,24 +47,6 @@
     <module>exporter-asserts</module>
     <module>exporters/elasticsearch-exporter</module>
   </modules>
-
-  <build>
-    <plugins>
-      <!-- Zeebe githooks plugin -->
-      <plugin>
-        <groupId>io.zeebe</groupId>
-        <artifactId>zb-githooks-plugin</artifactId>
-        <version>${project.version}</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>setup</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
 
   <scm>
     <url>https://github.com/zeebe-io/zeebe</url>
