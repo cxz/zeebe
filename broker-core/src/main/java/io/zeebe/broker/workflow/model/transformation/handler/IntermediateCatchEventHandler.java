@@ -17,18 +17,19 @@
  */
 package io.zeebe.broker.workflow.model.transformation.handler;
 
-import io.zeebe.broker.workflow.model.ExecutableMessageCatchElement;
-import io.zeebe.broker.workflow.model.ExecutableWorkflow;
+import io.zeebe.broker.workflow.model.BpmnStep;
+import io.zeebe.broker.workflow.model.element.ExecutableIntermediateCatchElement;
+import io.zeebe.broker.workflow.model.element.ExecutableMessage;
+import io.zeebe.broker.workflow.model.element.ExecutableWorkflow;
 import io.zeebe.broker.workflow.model.transformation.ModelElementTransformer;
 import io.zeebe.broker.workflow.model.transformation.TransformContext;
+import io.zeebe.model.bpmn.instance.EventDefinition;
 import io.zeebe.model.bpmn.instance.IntermediateCatchEvent;
-import io.zeebe.model.bpmn.instance.Message;
 import io.zeebe.model.bpmn.instance.MessageEventDefinition;
+import io.zeebe.protocol.intent.WorkflowInstanceIntent;
 
 public class IntermediateCatchEventHandler
     implements ModelElementTransformer<IntermediateCatchEvent> {
-
-  private final MessageCatchElementHandler messageCatchHandler = new MessageCatchElementHandler();
 
   @Override
   public Class<IntermediateCatchEvent> getType() {
@@ -41,13 +42,36 @@ public class IntermediateCatchEventHandler
     // only message supported at this point
 
     final ExecutableWorkflow workflow = context.getCurrentWorkflow();
-    final ExecutableMessageCatchElement executableElement =
-        workflow.getElementById(element.getId(), ExecutableMessageCatchElement.class);
+    final ExecutableIntermediateCatchElement executableElement =
+        workflow.getElementById(element.getId(), ExecutableIntermediateCatchElement.class);
 
-    final MessageEventDefinition eventDefinition =
-        (MessageEventDefinition) element.getEventDefinitions().iterator().next();
-    final Message message = eventDefinition.getMessage();
+    final EventDefinition eventDefinition = element.getEventDefinitions().iterator().next();
 
-    messageCatchHandler.transform(executableElement, message, context);
+    if (eventDefinition instanceof MessageEventDefinition) {
+      final MessageEventDefinition messageEventDefinition =
+          (MessageEventDefinition) eventDefinition;
+      final ExecutableMessage executableMessage =
+          context.getMessage(messageEventDefinition.getMessage().getId());
+      executableElement.setMessage(executableMessage);
+
+      bindLifecycle(context, executableElement);
+    }
+  }
+
+  private void bindLifecycle(
+      TransformContext context, final ExecutableIntermediateCatchElement executableElement) {
+
+    executableElement.bindLifecycleState(
+        WorkflowInstanceIntent.ELEMENT_READY, BpmnStep.APPLY_INPUT_MAPPING);
+    executableElement.bindLifecycleState(
+        WorkflowInstanceIntent.ELEMENT_ACTIVATED, BpmnStep.SUBSCRIBE_TO_INTERMEDIATE_MESSAGE);
+    executableElement.bindLifecycleState(
+        WorkflowInstanceIntent.ELEMENT_COMPLETING, BpmnStep.APPLY_OUTPUT_MAPPING);
+    executableElement.bindLifecycleState(
+        WorkflowInstanceIntent.ELEMENT_COMPLETED, context.getCurrentFlowNodeOutgoingStep());
+    executableElement.bindLifecycleState(
+        WorkflowInstanceIntent.ELEMENT_TERMINATING, BpmnStep.TERMINATE_ELEMENT);
+    executableElement.bindLifecycleState(
+        WorkflowInstanceIntent.ELEMENT_TERMINATED, BpmnStep.PROPAGATE_TERMINATION);
   }
 }

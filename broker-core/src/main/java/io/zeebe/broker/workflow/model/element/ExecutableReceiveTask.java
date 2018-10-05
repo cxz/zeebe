@@ -15,22 +15,23 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.zeebe.broker.workflow.processor.process;
+package io.zeebe.broker.workflow.model.element;
 
-import io.zeebe.broker.workflow.model.element.ExecutableWorkflow;
-import io.zeebe.broker.workflow.processor.BpmnStepContext;
-import io.zeebe.broker.workflow.processor.BpmnStepHandler;
-import io.zeebe.protocol.intent.WorkflowInstanceIntent;
+public class ExecutableReceiveTask extends ExecutableFlowNode
+    implements ExecutableMessageCatchElement {
 
-public class CompleteProcessHandler implements BpmnStepHandler<ExecutableWorkflow> {
+  public ExecutableReceiveTask(String id) {
+    super(id);
+  }
+
+  private ExecutableMessage message;
 
   @Override
-  public void handle(BpmnStepContext<ExecutableWorkflow> context) {
-    context
-        .getOutput()
-        .writeFollowUpEvent(
-            context.getRecord().getKey(),
-            WorkflowInstanceIntent.ELEMENT_COMPLETED,
-            context.getValue());
+  public ExecutableMessage getMessage() {
+    return message;
+  }
+
+  public void setMessage(ExecutableMessage message) {
+    this.message = message;
   }
 }

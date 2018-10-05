@@ -15,22 +15,36 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.zeebe.broker.workflow.processor.process;
+package io.zeebe.broker.workflow.model.element;
 
-import io.zeebe.broker.workflow.model.element.ExecutableWorkflow;
-import io.zeebe.broker.workflow.processor.BpmnStepContext;
-import io.zeebe.broker.workflow.processor.BpmnStepHandler;
+import io.zeebe.broker.workflow.model.BpmnStep;
 import io.zeebe.protocol.intent.WorkflowInstanceIntent;
+import io.zeebe.util.buffer.BufferUtil;
+import java.util.EnumMap;
+import java.util.Map;
+import org.agrona.DirectBuffer;
 
-public class CompleteProcessHandler implements BpmnStepHandler<ExecutableWorkflow> {
+public abstract class AbstractFlowElement implements ExecutableFlowElement {
+
+  private final DirectBuffer id;
+  private Map<WorkflowInstanceIntent, BpmnStep> bpmnSteps =
+      new EnumMap<>(WorkflowInstanceIntent.class);
+
+  public AbstractFlowElement(String id) {
+    this.id = BufferUtil.wrapString(id);
+  }
 
   @Override
-  public void handle(BpmnStepContext<ExecutableWorkflow> context) {
-    context
-        .getOutput()
-        .writeFollowUpEvent(
-            context.getRecord().getKey(),
-            WorkflowInstanceIntent.ELEMENT_COMPLETED,
-            context.getValue());
+  public DirectBuffer getId() {
+    return id;
+  }
+
+  public void bindLifecycleState(WorkflowInstanceIntent state, BpmnStep step) {
+    this.bpmnSteps.put(state, step);
+  }
+
+  @Override
+  public BpmnStep getStep(WorkflowInstanceIntent state) {
+    return bpmnSteps.get(state);
   }
 }

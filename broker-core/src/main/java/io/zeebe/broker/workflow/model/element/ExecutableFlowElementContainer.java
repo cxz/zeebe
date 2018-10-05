@@ -15,33 +15,21 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.zeebe.broker.workflow.model;
+package io.zeebe.broker.workflow.model.element;
 
-import io.zeebe.msgpack.jsonpath.JsonPathQuery;
-import org.agrona.DirectBuffer;
+public class ExecutableFlowElementContainer extends ExecutableFlowNode {
 
-public class ExecutableMessageCatchElement extends ExecutableFlowNode {
+  private ExecutableFlowNode startEvent;
 
-  private JsonPathQuery correlationKey;
-  private DirectBuffer messageName;
-
-  public ExecutableMessageCatchElement(String id) {
+  public ExecutableFlowElementContainer(String id) {
     super(id);
   }
 
-  public JsonPathQuery getCorrelationKey() {
-    return correlationKey;
+  public ExecutableFlowNode getStartEvent() {
+    return startEvent;
   }
 
-  public void setCorrelationKey(JsonPathQuery correlationKey) {
-    this.correlationKey = correlationKey;
-  }
-
-  public DirectBuffer getMessageName() {
-    return messageName;
-  }
-
-  public void setMessageName(DirectBuffer messageName) {
-    this.messageName = messageName;
+  public void setStartEvent(ExecutableFlowNode startEvent) {
+    this.startEvent = startEvent;
   }
 }

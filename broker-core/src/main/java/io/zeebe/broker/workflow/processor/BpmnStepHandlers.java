@@ -19,7 +19,7 @@ package io.zeebe.broker.workflow.processor;
 
 import io.zeebe.broker.subscription.command.SubscriptionCommandSender;
 import io.zeebe.broker.workflow.model.BpmnStep;
-import io.zeebe.broker.workflow.model.ExecutableFlowElement;
+import io.zeebe.broker.workflow.model.element.ExecutableFlowElement;
 import io.zeebe.broker.workflow.processor.activity.InputMappingHandler;
 import io.zeebe.broker.workflow.processor.activity.OutputMappingHandler;
 import io.zeebe.broker.workflow.processor.activity.PropagateTerminationHandler;

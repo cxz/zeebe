@@ -15,22 +15,15 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.zeebe.broker.workflow.processor.process;
+package io.zeebe.broker.workflow.model.element;
 
-import io.zeebe.broker.workflow.model.element.ExecutableWorkflow;
-import io.zeebe.broker.workflow.processor.BpmnStepContext;
-import io.zeebe.broker.workflow.processor.BpmnStepHandler;
+import io.zeebe.broker.workflow.model.BpmnStep;
 import io.zeebe.protocol.intent.WorkflowInstanceIntent;
+import org.agrona.DirectBuffer;
 
-public class CompleteProcessHandler implements BpmnStepHandler<ExecutableWorkflow> {
+public interface ExecutableFlowElement {
 
-  @Override
-  public void handle(BpmnStepContext<ExecutableWorkflow> context) {
-    context
-        .getOutput()
-        .writeFollowUpEvent(
-            context.getRecord().getKey(),
-            WorkflowInstanceIntent.ELEMENT_COMPLETED,
-            context.getValue());
-  }
+  DirectBuffer getId();
+
+  BpmnStep getStep(WorkflowInstanceIntent state);
 }

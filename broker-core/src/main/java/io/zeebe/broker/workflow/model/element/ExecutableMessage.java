@@ -15,22 +15,33 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.zeebe.broker.workflow.processor.process;
+package io.zeebe.broker.workflow.model.element;
 
-import io.zeebe.broker.workflow.model.element.ExecutableWorkflow;
-import io.zeebe.broker.workflow.processor.BpmnStepContext;
-import io.zeebe.broker.workflow.processor.BpmnStepHandler;
-import io.zeebe.protocol.intent.WorkflowInstanceIntent;
+import io.zeebe.msgpack.jsonpath.JsonPathQuery;
+import org.agrona.DirectBuffer;
 
-public class CompleteProcessHandler implements BpmnStepHandler<ExecutableWorkflow> {
+public class ExecutableMessage extends AbstractFlowElement {
 
-  @Override
-  public void handle(BpmnStepContext<ExecutableWorkflow> context) {
-    context
-        .getOutput()
-        .writeFollowUpEvent(
-            context.getRecord().getKey(),
-            WorkflowInstanceIntent.ELEMENT_COMPLETED,
-            context.getValue());
+  private JsonPathQuery correlationKey;
+  private DirectBuffer messageName;
+
+  public ExecutableMessage(String id) {
+    super(id);
+  }
+
+  public JsonPathQuery getCorrelationKey() {
+    return correlationKey;
+  }
+
+  public void setCorrelationKey(JsonPathQuery correlationKey) {
+    this.correlationKey = correlationKey;
+  }
+
+  public DirectBuffer getMessageName() {
+    return messageName;
+  }
+
+  public void setMessageName(DirectBuffer messageName) {
+    this.messageName = messageName;
   }
 }

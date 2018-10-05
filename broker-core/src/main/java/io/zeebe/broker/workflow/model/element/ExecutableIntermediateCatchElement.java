@@ -15,23 +15,23 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.zeebe.broker.workflow.model;
+package io.zeebe.broker.workflow.model.element;
 
-import io.zeebe.msgpack.mapping.Mapping;
+public class ExecutableIntermediateCatchElement extends ExecutableFlowNode
+    implements ExecutableMessageCatchElement {
 
-public class ExecutableEndEvent extends ExecutableFlowNode {
+  private ExecutableMessage message;
 
-  public ExecutableEndEvent(String id) {
+  public ExecutableIntermediateCatchElement(String id) {
     super(id);
   }
 
-  private Mapping[] payloadMappings = new Mapping[0];
-
-  public void setPayloadMappings(Mapping[] payloadMappings) {
-    this.payloadMappings = payloadMappings;
+  @Override
+  public ExecutableMessage getMessage() {
+    return message;
   }
 
-  public Mapping[] getPayloadMappings() {
-    return payloadMappings;
+  public void setMessage(ExecutableMessage message) {
+    this.message = message;
   }
 }
