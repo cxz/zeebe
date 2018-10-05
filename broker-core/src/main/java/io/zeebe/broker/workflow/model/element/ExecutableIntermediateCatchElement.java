@@ -17,10 +17,13 @@
  */
 package io.zeebe.broker.workflow.model.element;
 
+import java.time.Duration;
+
 public class ExecutableIntermediateCatchElement extends ExecutableFlowNode
     implements ExecutableMessageCatchElement {
 
   private ExecutableMessage message;
+  private Duration duration;
 
   public ExecutableIntermediateCatchElement(String id) {
     super(id);
@@ -33,5 +36,13 @@ public class ExecutableIntermediateCatchElement extends ExecutableFlowNode
 
   public void setMessage(ExecutableMessage message) {
     this.message = message;
+  }
+
+  public Duration getDuration() {
+    return duration;
+  }
+
+  public void setDuration(Duration duration) {
+    this.duration = duration;
   }
 }
