@@ -115,6 +115,16 @@ public class WorkflowEngineState implements StreamProcessorLifecycleAware {
       long key, WorkflowInstanceIntent state, WorkflowInstanceRecord value) {
     if (WorkflowInstanceLifecycle.isElementInstanceState(state)) {
       onElementInstanceEventProduced(key, state, value);
+    } else if (state == WorkflowInstanceIntent.PAYLOAD_UPDATED) {
+      // current hack: PAYLOAD_UPDATED can be part of both, element instance and token lifecycle
+      //   => we should improve that when we redesign incidents and payloads
+      if (elementInstanceState.getInstance(key) != null) {
+        onElementInstanceEventProduced(key, state, value);
+      } else {
+        // ignore => the only use case for payload updates of token events is currently incidents;
+        //   see ExclusiveSplitHandler.raiseIncident for explanation why we don't count another
+        // token here
+      }
     } else {
       onTokenEventProduced(key, state, value);
     }
@@ -175,7 +185,12 @@ public class WorkflowEngineState implements StreamProcessorLifecycleAware {
 
     } else {
       final ElementInstance scopeInstance = elementInstanceState.getInstance(key);
-      scopeInstance.setState(state);
+
+      // payload update does not change state
+      if (state != WorkflowInstanceIntent.PAYLOAD_UPDATED) {
+        scopeInstance.setState(state);
+      }
+
       scopeInstance.setValue(value);
     }
 
@@ -184,7 +199,17 @@ public class WorkflowEngineState implements StreamProcessorLifecycleAware {
         metrics.countInstanceCanceled();
       } else if (state == WorkflowInstanceIntent.ELEMENT_COMPLETED) {
         metrics.countInstanceCompleted();
+      } else if (state == WorkflowInstanceIntent.ELEMENT_READY) {
+        metrics.countInstanceCreated();
       }
     }
+  }
+
+  public WorkflowState getWorkflowState() {
+    return workflowState;
+  }
+
+  public ElementInstanceState getElementInstanceState() {
+    return workflowState.getElementInstanceState();
   }
 }
