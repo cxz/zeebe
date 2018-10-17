@@ -44,7 +44,7 @@ import io.zeebe.broker.system.configuration.SocketBindingClientApiCfg;
 import io.zeebe.broker.system.configuration.SocketBindingManagementCfg;
 import io.zeebe.broker.system.configuration.SocketBindingReplicationCfg;
 import io.zeebe.broker.system.configuration.SocketBindingSubscriptionCfg;
-import io.zeebe.broker.system.configuration.TomlConfigurationReader;
+import io.zeebe.util.TomlConfigurationReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.file.Paths;
@@ -171,7 +171,7 @@ public class ConfigurationTest {
                     + "[[exporters]]\n"
                     + "id=\"internal-2\"")
                 .getBytes());
-    final BrokerCfg config = TomlConfigurationReader.read(input);
+    final BrokerCfg config = TomlConfigurationReader.read(input, BrokerCfg.class);
     final String base = temporaryFolder.getRoot().getAbsolutePath();
     final String jarFile = Paths.get(base, "exporters", "exporter.jar").toAbsolutePath().toString();
 
@@ -413,7 +413,7 @@ public class ConfigurationTest {
         .withFailMessage("Unable to read configuration file %s", configPath)
         .isNotNull();
 
-    final BrokerCfg config = TomlConfigurationReader.read(resourceAsStream);
+    final BrokerCfg config = TomlConfigurationReader.read(resourceAsStream, BrokerCfg.class);
     config.init(BROKER_BASE, new Environment(environment));
     return config;
   }
