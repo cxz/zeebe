@@ -18,6 +18,7 @@ package io.zeebe.broker;
 import static java.lang.Runtime.getRuntime;
 
 import io.zeebe.broker.system.configuration.BrokerCfg;
+import io.zeebe.gateway.configuration.GatewayCfg;
 import io.zeebe.util.FileUtil;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -71,7 +72,7 @@ public class StandaloneBroker {
     try {
       tempFolder = Files.createTempDirectory("zeebe").toAbsolutePath().normalize().toString();
       final BrokerCfg cfg = new BrokerCfg();
-      return new Broker(cfg, tempFolder, null);
+      return new Broker(cfg, new GatewayCfg(), tempFolder, null);
     } catch (final IOException e) {
       throw new RuntimeException("Could not start broker", e);
     }

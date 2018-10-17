@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -55,26 +54,7 @@ public class ActivateJobsTest {
 
   @Before
   public void setUp() {
-    client =
-        // TODO(menski): replace with client rule when switch to rpc client
-        ZeebeClient.newClientBuilder()
-            .brokerContactPoint(
-                clusteringRule
-                    .getBrokers()
-                    .get(0)
-                    .getConfig()
-                    .getNetwork()
-                    .getGateway()
-                    .toSocketAddress()
-                    .toString())
-            .build();
-  }
-
-  @After
-  public void tearDown() {
-    if (client != null) {
-      client.close();
-    }
+    client = clusteringRule.getGrpcClient();
   }
 
   @Test

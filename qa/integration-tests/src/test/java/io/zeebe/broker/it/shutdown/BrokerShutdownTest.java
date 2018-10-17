@@ -20,6 +20,7 @@ import io.zeebe.broker.system.configuration.BrokerCfg;
 import io.zeebe.broker.system.configuration.NetworkCfg;
 import io.zeebe.broker.test.EmbeddedBrokerRule;
 import io.zeebe.broker.transport.TransportServiceNames;
+import io.zeebe.gateway.configuration.GatewayCfg;
 import io.zeebe.servicecontainer.Service;
 import io.zeebe.servicecontainer.ServiceContainer;
 import io.zeebe.servicecontainer.ServiceName;
@@ -88,8 +89,9 @@ public class BrokerShutdownTest {
 
   private Broker startBrokerWithBlockingService(final File brokerBase) {
     final BrokerCfg brokerCfg = new BrokerCfg();
-    EmbeddedBrokerRule.assignSocketAddresses(brokerCfg);
-    final Broker broker = new Broker(brokerCfg, brokerBase.getAbsolutePath(), null);
+    final GatewayCfg gatewayCfg = new GatewayCfg();
+    EmbeddedBrokerRule.assignSocketAddresses(brokerCfg, gatewayCfg);
+    final Broker broker = new Broker(brokerCfg, gatewayCfg, brokerBase.getAbsolutePath(), null);
 
     final ServiceContainer serviceContainer = broker.getBrokerContext().getServiceContainer();
 

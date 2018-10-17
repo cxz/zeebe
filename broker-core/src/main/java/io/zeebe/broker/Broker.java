@@ -28,6 +28,7 @@ import io.zeebe.broker.system.configuration.BrokerCfg;
 import io.zeebe.broker.transport.GatewayComponent;
 import io.zeebe.broker.transport.TransportComponent;
 import io.zeebe.broker.workflow.WorkflowComponent;
+import io.zeebe.gateway.configuration.GatewayCfg;
 import io.zeebe.util.LogUtil;
 import io.zeebe.util.sched.clock.ActorClock;
 import java.io.InputStream;
@@ -54,8 +55,12 @@ public class Broker implements AutoCloseable {
     this(new SystemContext(configStream, basePath, clock));
   }
 
-  public Broker(final BrokerCfg cfg, final String basePath, final ActorClock clock) {
-    this(new SystemContext(cfg, basePath, clock));
+  public Broker(
+      final BrokerCfg cfg,
+      final GatewayCfg gatewayCfg,
+      final String basePath,
+      final ActorClock clock) {
+    this(new SystemContext(cfg, gatewayCfg, basePath, clock));
   }
 
   public Broker(final SystemContext systemContext) {

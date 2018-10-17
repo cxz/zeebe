@@ -37,13 +37,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.zeebe.broker.system.configuration.BrokerCfg;
 import io.zeebe.broker.system.configuration.ClusterCfg;
 import io.zeebe.broker.system.configuration.DataCfg;
-import io.zeebe.broker.system.configuration.Environment;
 import io.zeebe.broker.system.configuration.ExporterCfg;
 import io.zeebe.broker.system.configuration.NetworkCfg;
 import io.zeebe.broker.system.configuration.SocketBindingClientApiCfg;
 import io.zeebe.broker.system.configuration.SocketBindingManagementCfg;
 import io.zeebe.broker.system.configuration.SocketBindingReplicationCfg;
 import io.zeebe.broker.system.configuration.SocketBindingSubscriptionCfg;
+import io.zeebe.util.Environment;
 import io.zeebe.util.TomlConfigurationReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -197,7 +197,6 @@ public class ConfigurationTest {
     assertHost(
         "specific-hosts",
         DEFAULT_HOST,
-        "gatewayHost",
         "clientHost",
         "managementHost",
         "replicationHost",
@@ -227,7 +226,6 @@ public class ConfigurationTest {
     assertHost(
         "specific-hosts",
         "myHost",
-        "gatewayHost",
         "clientHost",
         "managementHost",
         "replicationHost",
@@ -437,20 +435,18 @@ public class ConfigurationTest {
   }
 
   private void assertHost(final String configFileName, final String host) {
-    assertHost(configFileName, host, host, host, host, host, host);
+    assertHost(configFileName, host, host, host, host, host);
   }
 
   private void assertHost(
       final String configFileName,
       final String host,
-      final String gateway,
       final String client,
       final String management,
       final String replication,
       final String subscription) {
     final NetworkCfg cfg = readConfig(configFileName).getNetwork();
     assertThat(cfg.getHost()).isEqualTo(host);
-    assertThat(cfg.getGateway().getHost()).isEqualTo(gateway);
     assertThat(cfg.getClient().getHost()).isEqualTo(client);
     assertThat(cfg.getManagement().getHost()).isEqualTo(management);
     assertThat(cfg.getReplication().getHost()).isEqualTo(replication);

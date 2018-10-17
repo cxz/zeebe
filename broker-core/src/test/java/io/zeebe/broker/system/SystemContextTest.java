@@ -18,6 +18,7 @@
 package io.zeebe.broker.system;
 
 import io.zeebe.broker.system.configuration.BrokerCfg;
+import io.zeebe.gateway.configuration.GatewayCfg;
 import io.zeebe.util.sched.clock.ControlledActorClock;
 import org.junit.Rule;
 import org.junit.Test;
@@ -97,6 +98,6 @@ public class SystemContextTest {
   }
 
   private SystemContext initSystemContext(BrokerCfg brokerCfg) {
-    return new SystemContext(brokerCfg, "test", new ControlledActorClock());
+    return new SystemContext(brokerCfg, new GatewayCfg(), "test", new ControlledActorClock());
   }
 }

@@ -18,6 +18,7 @@ package io.zeebe.broker.it.clustering;
 import static io.zeebe.broker.test.EmbeddedBrokerConfigurator.DEBUG_EXPORTER;
 import static io.zeebe.broker.test.EmbeddedBrokerConfigurator.TEST_RECORDER;
 import static io.zeebe.broker.test.EmbeddedBrokerConfigurator.setCluster;
+import static io.zeebe.broker.test.EmbeddedBrokerConfigurator.setEmbedGateway;
 import static io.zeebe.broker.test.EmbeddedBrokerConfigurator.setInitialContactPoints;
 import static io.zeebe.broker.test.EmbeddedBrokerRule.assignSocketAddresses;
 import static io.zeebe.test.util.TestUtil.doRepeatedly;
@@ -26,9 +27,11 @@ import static io.zeebe.test.util.TestUtil.waitUntil;
 import io.zeebe.broker.Broker;
 import io.zeebe.broker.it.util.TopologyClient;
 import io.zeebe.broker.system.configuration.BrokerCfg;
+import io.zeebe.gateway.Gateway;
 import io.zeebe.gateway.ZeebeClient;
 import io.zeebe.gateway.api.commands.BrokerInfo;
 import io.zeebe.gateway.api.commands.PartitionInfo;
+import io.zeebe.gateway.configuration.GatewayCfg;
 import io.zeebe.gateway.impl.ZeebeClientImpl;
 import io.zeebe.test.util.record.RecordingExporter;
 import io.zeebe.test.util.record.RecordingExporterTestWatcher;
@@ -36,6 +39,7 @@ import io.zeebe.transport.SocketAddress;
 import io.zeebe.util.FileUtil;
 import io.zeebe.util.ZbLogger;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -76,7 +80,9 @@ public class ClusteringRule extends ExternalResource {
 
   private final File[] brokerBases;
   private final BrokerCfg[] brokerCfgs;
+  private GatewayCfg gatewayCfg;
   private final Broker[] brokers;
+  private Gateway gateway;
   private final List<Integer> partitionIds;
 
   public ClusteringRule() {
@@ -107,7 +113,7 @@ public class ClusteringRule extends ExternalResource {
   }
 
   @Override
-  protected void before() {
+  protected void before() throws IOException {
     RecordingExporter.reset();
 
     for (int i = 0; i < clusterSize; i++) {
@@ -115,6 +121,9 @@ public class ClusteringRule extends ExternalResource {
     }
 
     final BrokerCfg brokerCfg = brokerCfgs[0];
+
+    startGateway(brokerCfg);
+
     zeebeClient =
         ZeebeClient.newClientBuilder()
             .brokerContactPoint(brokerCfg.getNetwork().getClient().toSocketAddress().toString())
@@ -125,7 +134,8 @@ public class ClusteringRule extends ExternalResource {
 
     grpcClient =
         io.zeebe.client.ZeebeClient.newClientBuilder()
-            .brokerContactPoint(brokerCfg.getNetwork().getGateway().toSocketAddress().toString())
+            .brokerContactPoint(
+                gatewayCfg.getNetwork().getHost() + ":" + gatewayCfg.getNetwork().getPort())
             .build();
     closeables.add(grpcClient);
 
@@ -304,10 +314,22 @@ public class ClusteringRule extends ExternalResource {
       configureBroker(brokerId, brokerCfg);
     }
 
-    final Broker broker = new Broker(brokerCfg, brokerBase.getAbsolutePath(), null);
+    final Broker broker =
+        new Broker(brokerCfg, new GatewayCfg(), brokerBase.getAbsolutePath(), null);
 
     brokers[brokerId] = broker;
     closeables.add(broker);
+  }
+
+  private void startGateway(BrokerCfg brokerCfg) throws IOException {
+    gatewayCfg = new GatewayCfg();
+    gatewayCfg
+        .getCluster()
+        .setContactPoint(brokerCfg.getNetwork().getClient().toSocketAddress().toString());
+
+    gateway = new Gateway(gatewayCfg);
+    closeables.add(0, gateway::stop);
+    gateway.start();
   }
 
   private void configureBroker(int brokerId, BrokerCfg brokerCfg) {
@@ -325,13 +347,16 @@ public class ClusteringRule extends ExternalResource {
           .accept(brokerCfg);
     }
 
+    // disable gateway
+    setEmbedGateway(false).accept(brokerCfg);
+
     // custom configurators
     for (Consumer<BrokerCfg> configurator : configurators) {
       configurator.accept(brokerCfg);
     }
 
     // set random port numbers
-    assignSocketAddresses(brokerCfg);
+    assignSocketAddresses(brokerCfg, null);
   }
 
   /**

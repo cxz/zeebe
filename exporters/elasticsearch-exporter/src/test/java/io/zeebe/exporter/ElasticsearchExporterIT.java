@@ -69,8 +69,7 @@ public class ElasticsearchExporterIT {
     // TODO(menski): replace with client rule after migration to client
     zeebeClient =
         ZeebeClient.newClientBuilder()
-            .brokerContactPoint(
-                testRule.getBrokerCfg().getNetwork().getGateway().toSocketAddress().toString())
+            .brokerContactPoint(testRule.getBrokerRule().getGatewayAddress().toString())
             .build();
     esClient = createElasticsearchClient();
   }

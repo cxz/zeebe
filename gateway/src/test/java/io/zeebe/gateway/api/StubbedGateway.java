@@ -24,6 +24,7 @@ import io.zeebe.gateway.Gateway;
 import io.zeebe.gateway.cmd.BrokerErrorException;
 import io.zeebe.gateway.cmd.ClientCommandRejectedException;
 import io.zeebe.gateway.cmd.ClientException;
+import io.zeebe.gateway.configuration.GatewayCfg;
 import io.zeebe.gateway.impl.broker.BrokerClient;
 import io.zeebe.gateway.impl.broker.BrokerResponseConsumer;
 import io.zeebe.gateway.impl.broker.cluster.BrokerClusterState;
@@ -52,7 +53,7 @@ public class StubbedGateway extends Gateway {
   private List<BrokerRequest> brokerRequests = new ArrayList<>();
 
   public StubbedGateway() {
-    super(() -> InProcessServerBuilder.forName(SERVER_NAME));
+    super(new GatewayCfg(), cfg -> InProcessServerBuilder.forName(SERVER_NAME));
   }
 
   public <RequestT extends BrokerRequest<?>, ResponseT extends BrokerResponse<?>>

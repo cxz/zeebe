@@ -73,15 +73,14 @@ public class BrokerClientImpl implements BrokerClient {
             .setCpuBoundActorThreadCount(configuration.getNumManagementThreads())
             .setIoBoundActorThreadCount(0)
             .setActorClock(actorClock)
-            .setSchedulerName("client")
+            .setSchedulerName("broker-client")
             .build();
     this.actorScheduler.start();
 
     final ByteValue sendBufferSize = ByteValue.ofMegabytes(configuration.getSendBufferSize());
-    final long requestBlockTimeMs = configuration.getRequestBlocktime().toMillis();
 
     dataFrameReceiveBuffer =
-        Dispatchers.create("receive-buffer")
+        Dispatchers.create("broker-client-receive-buffer")
             .bufferSize(sendBufferSize)
             .modePubSub()
             .frameMaxLength(1024 * 1024)

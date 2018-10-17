@@ -17,13 +17,18 @@
  */
 package io.zeebe.broker.system.configuration;
 
+import static io.zeebe.broker.system.configuration.EnvironmentConstants.ENV_EMBED_GATEWAY;
+
 import com.google.gson.GsonBuilder;
 import io.zeebe.gossip.GossipConfiguration;
 import io.zeebe.raft.RaftConfiguration;
+import io.zeebe.util.Environment;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BrokerCfg {
+
+  private boolean embedGateway = true;
 
   private NetworkCfg network = new NetworkCfg();
   private ClusterCfg cluster = new ClusterCfg();
@@ -39,12 +44,26 @@ public class BrokerCfg {
   }
 
   public void init(final String brokerBase, final Environment environment) {
+    applyEnvironment(environment);
     network.init(this, brokerBase, environment);
     cluster.init(this, brokerBase, environment);
     threads.init(this, brokerBase, environment);
     metrics.init(this, brokerBase, environment);
     data.init(this, brokerBase, environment);
     exporters.forEach(e -> e.init(this, brokerBase, environment));
+  }
+
+  private void applyEnvironment(final Environment environment) {
+    environment.getBool(ENV_EMBED_GATEWAY).ifPresent(v -> embedGateway = v);
+  }
+
+  public boolean isEmbedGateway() {
+    return embedGateway;
+  }
+
+  public BrokerCfg setEmbedGateway(boolean embedGateway) {
+    this.embedGateway = embedGateway;
+    return this;
   }
 
   public NetworkCfg getNetwork() {

@@ -23,6 +23,7 @@ import io.zeebe.broker.system.configuration.BrokerCfg;
 import io.zeebe.broker.system.configuration.ClusterCfg;
 import io.zeebe.broker.system.configuration.SocketBindingCfg;
 import io.zeebe.broker.system.configuration.ThreadsCfg;
+import io.zeebe.gateway.configuration.GatewayCfg;
 import io.zeebe.servicecontainer.ServiceContainer;
 import io.zeebe.servicecontainer.impl.ServiceContainerImpl;
 import io.zeebe.util.TomlConfigurationReader;
@@ -33,6 +34,8 @@ import io.zeebe.util.sched.future.ActorFuture;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -59,6 +62,7 @@ public class SystemContext implements AutoCloseable {
   protected final List<Component> components = new ArrayList<>();
 
   protected final BrokerCfg brokerCfg;
+  protected final GatewayCfg gatewayCfg;
 
   protected final List<ActorFuture<?>> requiredStartActions = new ArrayList<>();
   private final List<Closeable> closeablesToReleaseResources = new ArrayList<>();
@@ -70,27 +74,50 @@ public class SystemContext implements AutoCloseable {
   private Duration closeTimeout;
 
   public SystemContext(String configFileLocation, final String basePath, final ActorClock clock) {
+    this(
+        readBrokerConfiguration(configFileLocation, basePath),
+        readGatewayConfiguration(basePath),
+        basePath,
+        clock);
+  }
+
+  public SystemContext(
+      final InputStream configStream, final String basePath, final ActorClock clock) {
+    this(
+        TomlConfigurationReader.read(configStream, BrokerCfg.class),
+        readGatewayConfiguration(basePath),
+        basePath,
+        clock);
+  }
+
+  public SystemContext(
+      final BrokerCfg brokerCfg,
+      final GatewayCfg gatewayCfg,
+      final String basePath,
+      final ActorClock clock) {
+    this.brokerCfg = brokerCfg;
+    this.gatewayCfg = gatewayCfg;
+
+    initSystemContext(clock, basePath);
+  }
+
+  private static BrokerCfg readBrokerConfiguration(String configFileLocation, String basePath) {
     if (!Paths.get(configFileLocation).isAbsolute()) {
       configFileLocation =
           Paths.get(basePath, configFileLocation).normalize().toAbsolutePath().toString();
     }
 
-    brokerCfg = TomlConfigurationReader.read(configFileLocation, BrokerCfg.class);
-
-    initSystemContext(clock, basePath);
+    return TomlConfigurationReader.read(configFileLocation, BrokerCfg.class);
   }
 
-  public SystemContext(
-      final InputStream configStream, final String basePath, final ActorClock clock) {
-    brokerCfg = TomlConfigurationReader.read(configStream, BrokerCfg.class);
-
-    initSystemContext(clock, basePath);
-  }
-
-  public SystemContext(final BrokerCfg brokerCfg, final String basePath, final ActorClock clock) {
-    this.brokerCfg = brokerCfg;
-
-    initSystemContext(clock, basePath);
+  private static GatewayCfg readGatewayConfiguration(String basePath) {
+    // TODO(menski): make this configurable
+    final Path path = Paths.get(basePath, "conf/gateway.cfg.toml").normalize().toAbsolutePath();
+    if (Files.exists(path)) {
+      return TomlConfigurationReader.read(path.toString(), GatewayCfg.class);
+    } else {
+      return new GatewayCfg();
+    }
   }
 
   private void initSystemContext(final ActorClock clock, final String basePath) {
@@ -242,6 +269,10 @@ public class SystemContext implements AutoCloseable {
 
   public BrokerCfg getBrokerConfiguration() {
     return brokerCfg;
+  }
+
+  public GatewayCfg getGatewayConfiguration() {
+    return gatewayCfg;
   }
 
   public void addRequiredStartAction(final ActorFuture<?> future) {

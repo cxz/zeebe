@@ -22,6 +22,7 @@ import io.zeebe.broker.system.configuration.BrokerCfg;
 import io.zeebe.broker.system.configuration.ExporterCfg;
 import io.zeebe.broker.system.configuration.NetworkCfg;
 import io.zeebe.broker.transport.TransportServiceNames;
+import io.zeebe.gateway.configuration.GatewayCfg;
 import io.zeebe.protocol.Protocol;
 import io.zeebe.servicecontainer.Injector;
 import io.zeebe.servicecontainer.Service;
@@ -65,6 +66,7 @@ public class EmbeddedBrokerRule extends ExternalResource {
       new RecordingExporterTestWatcher();
 
   protected BrokerCfg brokerCfg;
+  protected GatewayCfg gatewayCfg;
   protected Broker broker;
 
   protected ControlledActorClock controlledActorClock = new ControlledActorClock();
@@ -142,12 +144,16 @@ public class EmbeddedBrokerRule extends ExternalResource {
     return brokerCfg;
   }
 
+  public GatewayCfg getGatewayCfg() {
+    return gatewayCfg;
+  }
+
   public SocketAddress getClientAddress() {
     return brokerCfg.getNetwork().getClient().toSocketAddress();
   }
 
   public SocketAddress getGatewayAddress() {
-    return brokerCfg.getNetwork().getGateway().toSocketAddress();
+    return new SocketAddress(gatewayCfg.getNetwork().getHost(), gatewayCfg.getNetwork().getPort());
   }
 
   public SocketAddress getManagementAddress() {
@@ -183,14 +189,17 @@ public class EmbeddedBrokerRule extends ExternalResource {
         } else {
           brokerCfg = TomlConfigurationReader.read(configStream, BrokerCfg.class);
         }
-        configureBroker(brokerCfg);
+        gatewayCfg = new GatewayCfg();
+        configureBroker(brokerCfg, gatewayCfg);
       } catch (final IOException e) {
         throw new RuntimeException("Unable to open configuration", e);
       }
     }
 
     RecordingExporter.reset();
-    broker = new Broker(brokerCfg, newTemporaryFolder.getAbsolutePath(), controlledActorClock);
+    broker =
+        new Broker(
+            brokerCfg, gatewayCfg, newTemporaryFolder.getAbsolutePath(), controlledActorClock);
 
     final ServiceContainer serviceContainer = broker.getBrokerContext().getServiceContainer();
 
@@ -218,7 +227,7 @@ public class EmbeddedBrokerRule extends ExternalResource {
     dataDirectories = broker.getBrokerContext().getBrokerConfiguration().getData().getDirectories();
   }
 
-  public void configureBroker(final BrokerCfg brokerCfg) {
+  public void configureBroker(final BrokerCfg brokerCfg, final GatewayCfg gatewayCfg) {
     // build-in exporters
     final ExporterCfg exporterCfg = new ExporterCfg();
     exporterCfg.setId("test-recorder");
@@ -231,7 +240,7 @@ public class EmbeddedBrokerRule extends ExternalResource {
     }
 
     // set random port numbers
-    assignSocketAddresses(brokerCfg);
+    assignSocketAddresses(brokerCfg, gatewayCfg);
   }
 
   public void purgeSnapshots() {
@@ -300,13 +309,19 @@ public class EmbeddedBrokerRule extends ExternalResource {
     }
   }
 
-  public static void assignSocketAddresses(final BrokerCfg brokerCfg) {
+  public static void assignSocketAddresses(final BrokerCfg brokerCfg, final GatewayCfg gatewayCfg) {
     final NetworkCfg network = brokerCfg.getNetwork();
-    network.getGateway().setPort(SocketUtil.getNextAddress().port());
     network.getClient().setPort(SocketUtil.getNextAddress().port());
     network.getManagement().setPort(SocketUtil.getNextAddress().port());
     network.getReplication().setPort(SocketUtil.getNextAddress().port());
     network.getSubscription().setPort(SocketUtil.getNextAddress().port());
+
+    if (gatewayCfg != null) {
+      gatewayCfg.getNetwork().setPort(SocketUtil.getNextAddress().port());
+      gatewayCfg
+          .getCluster()
+          .setContactPoint("localhost:" + brokerCfg.getNetwork().getClient().getPort());
+    }
   }
 
   static class TestService implements Service<TestService> {

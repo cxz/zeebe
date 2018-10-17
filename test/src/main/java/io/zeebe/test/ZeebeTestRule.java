@@ -26,6 +26,7 @@ import io.zeebe.gateway.api.events.JobEvent;
 import io.zeebe.gateway.api.events.JobState;
 import io.zeebe.gateway.api.events.WorkflowInstanceEvent;
 import io.zeebe.gateway.api.events.WorkflowInstanceState;
+import io.zeebe.gateway.configuration.GatewayCfg;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Properties;
@@ -61,8 +62,16 @@ public class ZeebeTestRule extends ExternalResource {
     return clientRule.getClient();
   }
 
+  public EmbeddedBrokerRule getBrokerRule() {
+    return brokerRule;
+  }
+
   public BrokerCfg getBrokerCfg() {
     return brokerRule.getBrokerCfg();
+  }
+
+  public GatewayCfg getGatewayCfg() {
+    return brokerRule.getGatewayCfg();
   }
 
   @Override
