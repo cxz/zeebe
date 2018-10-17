@@ -70,7 +70,7 @@ public class ExclusiveGatewayTest {
 
     final WorkflowInstanceEvent endEvent =
         eventRecorder.getSingleWorkflowInstanceEvent(WorkflowInstanceState.END_EVENT_OCCURRED);
-    assertThat(endEvent.getActivityId()).isEqualTo("a");
+    assertThat(endEvent.getElementId()).isEqualTo("a");
   }
 
   @Test
@@ -103,7 +103,7 @@ public class ExclusiveGatewayTest {
 
     final WorkflowInstanceEvent endEvent =
         eventRecorder.getSingleWorkflowInstanceEvent(WorkflowInstanceState.END_EVENT_OCCURRED);
-    assertThat(endEvent.getActivityId()).isEqualTo("b");
+    assertThat(endEvent.getElementId()).isEqualTo("b");
   }
 
   @Test

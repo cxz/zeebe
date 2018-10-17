@@ -25,6 +25,6 @@ public class WorkflowInstanceRecordStream extends SubscribedRecordStream {
 
   public WorkflowInstanceRecordStream inElement(String elementId) {
     return new WorkflowInstanceRecordStream(
-        filter(r -> elementId.equals(r.value().get("activityId"))));
+        filter(r -> elementId.equals(r.value().get("elementId"))));
   }
 }

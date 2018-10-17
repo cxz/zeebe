@@ -18,8 +18,8 @@
 package io.zeebe.broker.workflow;
 
 import static io.zeebe.exporter.record.Assertions.assertThat;
-import static io.zeebe.protocol.impl.record.value.workflowinstance.WorkflowInstanceRecord.PROP_WORKFLOW_ACTIVITY_ID;
 import static io.zeebe.protocol.impl.record.value.workflowinstance.WorkflowInstanceRecord.PROP_WORKFLOW_BPMN_PROCESS_ID;
+import static io.zeebe.protocol.impl.record.value.workflowinstance.WorkflowInstanceRecord.PROP_WORKFLOW_ELEMENT_ID;
 import static io.zeebe.protocol.impl.record.value.workflowinstance.WorkflowInstanceRecord.PROP_WORKFLOW_INSTANCE_KEY;
 import static io.zeebe.protocol.impl.record.value.workflowinstance.WorkflowInstanceRecord.PROP_WORKFLOW_VERSION;
 import static io.zeebe.protocol.intent.WorkflowInstanceIntent.CANCEL;
@@ -127,7 +127,7 @@ public class CancelWorkflowInstanceTest {
         .containsEntry(PROP_WORKFLOW_BPMN_PROCESS_ID, PROCESS_ID)
         .containsEntry(PROP_WORKFLOW_VERSION, 1L)
         .containsEntry(PROP_WORKFLOW_INSTANCE_KEY, workflowInstanceKey)
-        .containsEntry(PROP_WORKFLOW_ACTIVITY_ID, PROCESS_ID);
+        .containsEntry(PROP_WORKFLOW_ELEMENT_ID, PROCESS_ID);
 
     final List<SubscribedRecord> workflowEvents =
         testClient
@@ -138,7 +138,7 @@ public class CancelWorkflowInstanceTest {
             .collect(Collectors.toList());
 
     assertThat(workflowEvents)
-        .extracting(e -> e.value().get("activityId"), e -> e.intent())
+        .extracting(e -> e.value().get("elementId"), e -> e.intent())
         .containsExactly(
             tuple(null, WorkflowInstanceIntent.CANCEL),
             tuple(PROCESS_ID, WorkflowInstanceIntent.CANCELING),
@@ -168,7 +168,7 @@ public class CancelWorkflowInstanceTest {
             .collect(Collectors.toList());
 
     assertThat(workflowEvents)
-        .extracting(e -> e.value().get("activityId"), e -> e.intent())
+        .extracting(e -> e.value().get("elementId"), e -> e.intent())
         .containsExactly(
             tuple(null, WorkflowInstanceIntent.CANCEL),
             tuple(PROCESS_ID, WorkflowInstanceIntent.CANCELING),
@@ -203,7 +203,7 @@ public class CancelWorkflowInstanceTest {
         .containsEntry(PROP_WORKFLOW_BPMN_PROCESS_ID, PROCESS_ID)
         .containsEntry(PROP_WORKFLOW_VERSION, 1L)
         .containsEntry(PROP_WORKFLOW_INSTANCE_KEY, workflowInstanceKey)
-        .containsEntry(PROP_WORKFLOW_ACTIVITY_ID, "task");
+        .containsEntry(PROP_WORKFLOW_ELEMENT_ID, "task");
   }
 
   @Test
@@ -237,11 +237,11 @@ public class CancelWorkflowInstanceTest {
 
     assertThat(terminatedElements).hasSize(3);
     assertThat(terminatedElements.subList(0, 2))
-        .extracting(r -> r.value().get("activityId"))
+        .extracting(r -> r.value().get("elementId"))
         .contains("task1", "task2");
 
     final SubscribedRecord processTerminatedEvent = terminatedElements.get(2);
-    assertThat(processTerminatedEvent.value().get("activityId")).isEqualTo(PROCESS_ID);
+    assertThat(processTerminatedEvent.value().get("elementId")).isEqualTo(PROCESS_ID);
   }
 
   @Test
@@ -277,7 +277,7 @@ public class CancelWorkflowInstanceTest {
         .containsEntry(PROP_WORKFLOW_BPMN_PROCESS_ID, "wf")
         .containsEntry(PROP_WORKFLOW_VERSION, 1L)
         .containsEntry(PROP_WORKFLOW_INSTANCE_KEY, workflowInstanceKey)
-        .containsEntry(PROP_WORKFLOW_ACTIVITY_ID, "catch-event");
+        .containsEntry(PROP_WORKFLOW_ELEMENT_ID, "catch-event");
   }
 
   @Test
@@ -311,7 +311,7 @@ public class CancelWorkflowInstanceTest {
         .containsEntry("workflowInstanceKey", workflowInstanceKey)
         .containsEntry("bpmnProcessId", PROCESS_ID)
         .containsEntry("workflowDefinitionVersion", 1L)
-        .containsEntry("activityId", "task");
+        .containsEntry("elementId", "task");
   }
 
   @Test
@@ -389,7 +389,7 @@ public class CancelWorkflowInstanceTest {
     final long workflowInstanceKey = testClient.createWorkflowInstance(PROCESS_ID);
     final Record<WorkflowInstanceRecordValue> activatedEvent =
         RecordingExporter.workflowInstanceRecords(WorkflowInstanceIntent.ELEMENT_ACTIVATED)
-            .withActivityId(PROCESS_ID)
+            .withElementId(PROCESS_ID)
             .getFirst();
 
     // when
@@ -401,7 +401,7 @@ public class CancelWorkflowInstanceTest {
 
     final Record<WorkflowInstanceRecordValue> cancelingEvent =
         RecordingExporter.workflowInstanceRecords(WorkflowInstanceIntent.CANCELING)
-            .withActivityId(PROCESS_ID)
+            .withElementId(PROCESS_ID)
             .getFirst();
 
     assertThat(cancelingEvent.getValue()).isEqualTo(activatedEvent.getValue());

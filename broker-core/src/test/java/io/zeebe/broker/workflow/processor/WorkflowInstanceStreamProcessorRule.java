@@ -192,7 +192,7 @@ public class WorkflowInstanceStreamProcessorRule extends ExternalResource {
                     .events()
                     .onlyWorkflowInstanceRecords()
                     .withIntent(intent)
-                    .filter(r -> elementIdAsBuffer.equals(r.getValue().getActivityId()))
+                    .filter(r -> elementIdAsBuffer.equals(r.getValue().getElementId()))
                     .findFirst())
         .until(o -> o.isPresent())
         .get();

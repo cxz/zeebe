@@ -50,9 +50,9 @@ public class IncidentCommandImpl extends IncidentRecordImpl implements IncidentC
     builder.append(", workflowInstanceKey=");
     builder.append(getWorkflowInstanceKey());
     builder.append(", activityId=");
-    builder.append(getActivityId());
-    builder.append(", activityInstanceKey=");
-    builder.append(getActivityInstanceKey());
+    builder.append(getElementId());
+    builder.append(", elementInstanceKey=");
+    builder.append(getElementInstanceKey());
     builder.append(", jobKey=");
     builder.append(getJobKey());
     builder.append("]");

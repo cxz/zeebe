@@ -48,7 +48,7 @@ public class Events {
     final WorkflowInstanceEventImpl baseEvent =
         new WorkflowInstanceEventImpl(new ZeebeObjectMapperImpl());
     baseEvent.setIntent(WorkflowInstanceIntent.CREATED);
-    baseEvent.setActivityId("some_activity");
+    baseEvent.setElementId("some_activity");
     baseEvent.setBpmnProcessId("some_proceess");
     baseEvent.setKey(89);
     baseEvent.setPayload("{\"key\":\"val\"}");

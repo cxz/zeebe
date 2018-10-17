@@ -115,8 +115,8 @@ public class IncidentTest {
         .containsEntry("failureEventPosition", failureEvent.position())
         .containsEntry("bpmnProcessId", "process")
         .containsEntry("workflowInstanceKey", workflowInstanceKey)
-        .containsEntry("activityId", "failingTask")
-        .containsEntry("activityInstanceKey", failureEvent.key())
+        .containsEntry("elementId", "failingTask")
+        .containsEntry("elementInstanceKey", failureEvent.key())
         .containsEntry("jobKey", -1L);
   }
 
@@ -147,8 +147,8 @@ public class IncidentTest {
         .containsEntry("failureEventPosition", failureEvent.position())
         .containsEntry("bpmnProcessId", "process")
         .containsEntry("workflowInstanceKey", workflowInstanceKey)
-        .containsEntry("activityId", "failingTask")
-        .containsEntry("activityInstanceKey", failureEvent.key())
+        .containsEntry("elementId", "failingTask")
+        .containsEntry("elementInstanceKey", failureEvent.key())
         .containsEntry("jobKey", -1L);
   }
 
@@ -181,8 +181,8 @@ public class IncidentTest {
         .containsEntry("errorMessage", "No data found for query $.foo.")
         .containsEntry("bpmnProcessId", "process")
         .containsEntry("workflowInstanceKey", workflowInstanceKey)
-        .containsEntry("activityId", "failingTask")
-        .containsEntry("activityInstanceKey", followUpEvent.key())
+        .containsEntry("elementId", "failingTask")
+        .containsEntry("elementInstanceKey", followUpEvent.key())
         .containsEntry("jobKey", -1L);
   }
 
@@ -217,8 +217,8 @@ public class IncidentTest {
         .containsEntry("errorMessage", "No data found for query $.foo.")
         .containsEntry("bpmnProcessId", "process")
         .containsEntry("workflowInstanceKey", workflowInstanceKey)
-        .containsEntry("activityId", "failingTask")
-        .containsEntry("activityInstanceKey", followUpEvent.key())
+        .containsEntry("elementId", "failingTask")
+        .containsEntry("elementInstanceKey", followUpEvent.key())
         .containsEntry("jobKey", -1L);
   }
 
@@ -285,8 +285,8 @@ public class IncidentTest {
             "Processing failed, since mapping will result in a non map object (json object).")
         .containsEntry("bpmnProcessId", "process")
         .containsEntry("workflowInstanceKey", workflowInstanceKey)
-        .containsEntry("activityId", "service")
-        .containsEntry("activityInstanceKey", followUpEvent.key())
+        .containsEntry("elementId", "service")
+        .containsEntry("elementInstanceKey", followUpEvent.key())
         .containsEntry("jobKey", -1L);
   }
 
@@ -368,8 +368,8 @@ public class IncidentTest {
             "Processing failed, since mapping will result in a non map object (json object).")
         .containsEntry("bpmnProcessId", "process")
         .containsEntry("workflowInstanceKey", workflowInstanceKey)
-        .containsEntry("activityId", "service")
-        .containsEntry("activityInstanceKey", followUpEvent.key())
+        .containsEntry("elementId", "service")
+        .containsEntry("elementInstanceKey", followUpEvent.key())
         .containsEntry("jobKey", -1L);
   }
 
@@ -446,8 +446,8 @@ public class IncidentTest {
         .containsEntry("errorMessage", "No data found for query $.testAttr.")
         .containsEntry("bpmnProcessId", "process")
         .containsEntry("workflowInstanceKey", workflowInstanceKey)
-        .containsEntry("activityId", "service")
-        .containsEntry("activityInstanceKey", followUpEvent.key())
+        .containsEntry("elementId", "service")
+        .containsEntry("elementInstanceKey", followUpEvent.key())
         .containsEntry("jobKey", -1L);
   }
 
@@ -514,8 +514,8 @@ public class IncidentTest {
         .containsEntry("errorMessage", "No data found for query $.testAttr.")
         .containsEntry("bpmnProcessId", "process")
         .containsEntry("workflowInstanceKey", workflowInstanceKey)
-        .containsEntry("activityId", "service")
-        .containsEntry("activityInstanceKey", followUpEvent.key())
+        .containsEntry("elementId", "service")
+        .containsEntry("elementInstanceKey", followUpEvent.key())
         .containsEntry("jobKey", -1L);
   }
 
@@ -554,7 +554,7 @@ public class IncidentTest {
         .containsEntry("errorType", ErrorType.CONDITION_ERROR.name())
         .containsEntry(
             "errorMessage", "All conditions evaluated to false and no default flow is set.")
-        .containsEntry("activityId", "xor");
+        .containsEntry("elementId", "xor");
   }
 
   @Test
@@ -585,7 +585,7 @@ public class IncidentTest {
         .containsEntry("errorType", ErrorType.CONDITION_ERROR.name())
         .containsEntry(
             "errorMessage", "Cannot compare values of different types: STRING and INTEGER")
-        .containsEntry("activityId", "xor");
+        .containsEntry("elementId", "xor");
   }
 
   @Test
@@ -856,7 +856,7 @@ public class IncidentTest {
         .containsEntry("errorMessage", "No data found for query $.bar.")
         .containsEntry("bpmnProcessId", "process")
         .containsEntry("workflowInstanceKey", workflowInstanceKey)
-        .containsEntry("activityId", "failingTask");
+        .containsEntry("elementId", "failingTask");
   }
 
   @Test
@@ -887,7 +887,7 @@ public class IncidentTest {
         .containsEntry("errorMessage", "No data found for query $.foo.")
         .containsEntry("bpmnProcessId", "process")
         .containsEntry("workflowInstanceKey", workflowInstanceKey)
-        .containsEntry("activityId", "failingTask");
+        .containsEntry("elementId", "failingTask");
   }
 
   @Test
@@ -948,8 +948,8 @@ public class IncidentTest {
         .containsEntry("errorMessage", "No data found for query $.foo.")
         .containsEntry("bpmnProcessId", "process")
         .containsEntry("workflowInstanceKey", workflowInstanceKey)
-        .containsEntry("activityId", "failingTask")
-        .containsEntry("activityInstanceKey", incidentEvent.value().get("activityInstanceKey"));
+        .containsEntry("elementId", "failingTask")
+        .containsEntry("elementInstanceKey", incidentEvent.value().get("elementInstanceKey"));
   }
 
   @Test
@@ -984,8 +984,8 @@ public class IncidentTest {
         .containsEntry("errorMessage", "No data found for query $.foo.")
         .containsEntry("bpmnProcessId", "process")
         .containsEntry("workflowInstanceKey", workflowInstanceKey)
-        .containsEntry("activityId", "failingTask")
-        .containsEntry("activityInstanceKey", incidentEvent.value().get("activityInstanceKey"));
+        .containsEntry("elementId", "failingTask")
+        .containsEntry("elementInstanceKey", incidentEvent.value().get("elementInstanceKey"));
   }
 
   @Test
@@ -1017,8 +1017,8 @@ public class IncidentTest {
         .containsEntry("failureEventPosition", failedEvent.position())
         .containsEntry("bpmnProcessId", "process")
         .containsEntry("workflowInstanceKey", workflowInstanceKey)
-        .containsEntry("activityId", "failingTask")
-        .containsEntry("activityInstanceKey", activityEvent.key())
+        .containsEntry("elementId", "failingTask")
+        .containsEntry("elementInstanceKey", activityEvent.key())
         .containsEntry("jobKey", failedEvent.key());
   }
 
@@ -1048,8 +1048,8 @@ public class IncidentTest {
         .containsEntry("errorMessage", "No more retries left.")
         .containsEntry("bpmnProcessId", "process")
         .containsEntry("workflowInstanceKey", workflowInstanceKey)
-        .containsEntry("activityId", "failingTask")
-        .containsEntry("activityInstanceKey", activityEvent.key())
+        .containsEntry("elementId", "failingTask")
+        .containsEntry("elementInstanceKey", activityEvent.key())
         .containsEntry("jobKey", jobEvent.key());
 
     final long lastPos = incidentEvent.position();
@@ -1062,8 +1062,8 @@ public class IncidentTest {
         .containsEntry("errorMessage", "No more retries left.")
         .containsEntry("bpmnProcessId", "process")
         .containsEntry("workflowInstanceKey", workflowInstanceKey)
-        .containsEntry("activityId", "failingTask")
-        .containsEntry("activityInstanceKey", activityEvent.key())
+        .containsEntry("elementId", "failingTask")
+        .containsEntry("elementInstanceKey", activityEvent.key())
         .containsEntry("jobKey", jobEvent.key());
   }
 
@@ -1093,8 +1093,8 @@ public class IncidentTest {
         .containsEntry("errorMessage", "No more retries left.")
         .containsEntry("bpmnProcessId", "process")
         .containsEntry("workflowInstanceKey", workflowInstanceKey)
-        .containsEntry("activityId", "failingTask")
-        .containsEntry("activityInstanceKey", incidentEvent.value().get("activityInstanceKey"))
+        .containsEntry("elementId", "failingTask")
+        .containsEntry("elementInstanceKey", incidentEvent.value().get("elementInstanceKey"))
         .containsEntry("jobKey", jobEvent.key());
 
     incidentEvent = testClient.receiveFirstIncidentEvent(IncidentIntent.DELETED);
@@ -1105,8 +1105,8 @@ public class IncidentTest {
         .containsEntry("errorMessage", "No more retries left.")
         .containsEntry("bpmnProcessId", "process")
         .containsEntry("workflowInstanceKey", workflowInstanceKey)
-        .containsEntry("activityId", "failingTask")
-        .containsEntry("activityInstanceKey", incidentEvent.value().get("activityInstanceKey"))
+        .containsEntry("elementId", "failingTask")
+        .containsEntry("elementInstanceKey", incidentEvent.value().get("elementInstanceKey"))
         .containsEntry("jobKey", jobEvent.key());
   }
 
@@ -1130,8 +1130,8 @@ public class IncidentTest {
         .containsEntry("failureEventPosition", failedEvent.position())
         .containsEntry("bpmnProcessId", "")
         .containsEntry("workflowInstanceKey", -1L)
-        .containsEntry("activityId", "")
-        .containsEntry("activityInstanceKey", -1L)
+        .containsEntry("elementId", "")
+        .containsEntry("elementInstanceKey", -1L)
         .containsEntry("jobKey", failedEvent.key());
   }
 
@@ -1156,8 +1156,8 @@ public class IncidentTest {
         .containsEntry("errorMessage", "No more retries left.")
         .containsEntry("bpmnProcessId", "")
         .containsEntry("workflowInstanceKey", -1L)
-        .containsEntry("activityId", "")
-        .containsEntry("activityInstanceKey", -1L)
+        .containsEntry("elementId", "")
+        .containsEntry("elementInstanceKey", -1L)
         .containsEntry("jobKey", jobEvent.key());
   }
 

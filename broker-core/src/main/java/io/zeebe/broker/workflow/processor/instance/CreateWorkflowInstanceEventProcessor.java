@@ -100,7 +100,7 @@ public final class CreateWorkflowInstanceEventProcessor
   private void acceptCommand(
       TypedRecord<WorkflowInstanceRecord> command, TypedStreamWriter writer) {
     final WorkflowInstanceRecord value = command.getValue();
-    value.setActivityId(value.getBpmnProcessId());
+    value.setElementId(value.getBpmnProcessId());
 
     final TypedBatchWriter batchWriter = writer.newBatch();
     batchWriter.addFollowUpEvent(

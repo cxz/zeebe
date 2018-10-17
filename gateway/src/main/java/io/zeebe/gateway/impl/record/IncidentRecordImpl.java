@@ -27,8 +27,8 @@ public abstract class IncidentRecordImpl extends RecordImpl implements IncidentR
 
   private String bpmnProcessId;
   private Long workflowInstanceKey;
-  private String activityId;
-  private Long activityInstanceKey;
+  private String elementId;
+  private Long elementInstanceKey;
 
   private Long jobKey;
 
@@ -64,21 +64,21 @@ public abstract class IncidentRecordImpl extends RecordImpl implements IncidentR
   }
 
   @Override
-  public String getActivityId() {
-    return activityId != null && !activityId.isEmpty() ? activityId : null;
+  public String getElementId() {
+    return elementId != null && !elementId.isEmpty() ? elementId : null;
   }
 
-  public void setActivityId(String activityId) {
-    this.activityId = activityId;
+  public void setElementId(String elementId) {
+    this.elementId = elementId;
   }
 
   @Override
-  public Long getActivityInstanceKey() {
-    return activityInstanceKey > 0 ? activityInstanceKey : null;
+  public Long getElementInstanceKey() {
+    return elementInstanceKey > 0 ? elementInstanceKey : null;
   }
 
-  public void setActivityInstanceKey(long activityInstanceKey) {
-    this.activityInstanceKey = activityInstanceKey;
+  public void setElementInstanceKey(long elementInstanceKey) {
+    this.elementInstanceKey = elementInstanceKey;
   }
 
   @Override

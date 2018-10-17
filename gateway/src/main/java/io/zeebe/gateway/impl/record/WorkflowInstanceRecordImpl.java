@@ -34,7 +34,7 @@ public abstract class WorkflowInstanceRecordImpl extends RecordImpl
   private long workflowKey = -1L;
   private long workflowInstanceKey = -1L;
   private long scopeInstanceKey = -1;
-  private String activityId;
+  private String elementId;
   private PayloadField payload;
 
   public WorkflowInstanceRecordImpl(ZeebeObjectMapperImpl objectMapper, RecordType recordType) {
@@ -50,7 +50,7 @@ public abstract class WorkflowInstanceRecordImpl extends RecordImpl
     this.version = base.getVersion();
     this.workflowKey = base.getWorkflowKey();
     this.workflowInstanceKey = base.getWorkflowInstanceKey();
-    this.activityId = base.getActivityId();
+    this.elementId = base.getElementId();
     this.scopeInstanceKey = base.getScopeInstanceKey();
 
     this.payload = new PayloadField(base.payload);
@@ -93,12 +93,12 @@ public abstract class WorkflowInstanceRecordImpl extends RecordImpl
   }
 
   @Override
-  public String getActivityId() {
-    return activityId;
+  public String getElementId() {
+    return elementId;
   }
 
-  public void setActivityId(String activityId) {
-    this.activityId = activityId;
+  public void setElementId(String elementId) {
+    this.elementId = elementId;
   }
 
   @JsonProperty("payload")

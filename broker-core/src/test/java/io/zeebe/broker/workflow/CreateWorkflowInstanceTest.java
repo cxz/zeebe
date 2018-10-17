@@ -21,8 +21,8 @@ import static io.zeebe.broker.test.EmbeddedBrokerConfigurator.setPartitionCount;
 import static io.zeebe.broker.test.MsgPackConstants.MSGPACK_PAYLOAD;
 import static io.zeebe.msgpack.spec.MsgPackHelper.EMTPY_OBJECT;
 import static io.zeebe.msgpack.spec.MsgPackHelper.NIL;
-import static io.zeebe.protocol.impl.record.value.workflowinstance.WorkflowInstanceRecord.PROP_WORKFLOW_ACTIVITY_ID;
 import static io.zeebe.protocol.impl.record.value.workflowinstance.WorkflowInstanceRecord.PROP_WORKFLOW_BPMN_PROCESS_ID;
+import static io.zeebe.protocol.impl.record.value.workflowinstance.WorkflowInstanceRecord.PROP_WORKFLOW_ELEMENT_ID;
 import static io.zeebe.protocol.intent.WorkflowInstanceIntent.CREATE;
 import static io.zeebe.protocol.intent.WorkflowInstanceIntent.CREATED;
 import static io.zeebe.test.broker.protocol.clientapi.TestPartitionClient.PROP_WORKFLOW_INSTANCE_KEY;
@@ -165,7 +165,7 @@ public class CreateWorkflowInstanceTest {
     assertThat(event.value())
         .containsEntry(PROP_WORKFLOW_BPMN_PROCESS_ID, "process")
         .containsEntry(PROP_WORKFLOW_INSTANCE_KEY, resp.key())
-        .containsEntry(PROP_WORKFLOW_ACTIVITY_ID, "bar")
+        .containsEntry(PROP_WORKFLOW_ELEMENT_ID, "bar")
         .containsEntry(PROP_WORKFLOW_VERSION, 2L)
         .containsEntry(PROP_WORKFLOW_KEY, workflowKey);
   }
@@ -204,7 +204,7 @@ public class CreateWorkflowInstanceTest {
     assertThat(event.value())
         .containsEntry(PROP_WORKFLOW_BPMN_PROCESS_ID, "process")
         .containsEntry(PROP_WORKFLOW_INSTANCE_KEY, resp.key())
-        .containsEntry(PROP_WORKFLOW_ACTIVITY_ID, "foo")
+        .containsEntry(PROP_WORKFLOW_ELEMENT_ID, "foo")
         .containsEntry(PROP_WORKFLOW_VERSION, 1L)
         .containsEntry(PROP_WORKFLOW_KEY, workflowKey);
   }
@@ -451,7 +451,7 @@ public class CreateWorkflowInstanceTest {
             .receiveEvents()
             .ofTypeWorkflowInstance()
             .withIntent(WorkflowInstanceIntent.ELEMENT_ACTIVATED)
-            .filter(r -> "task".equals(r.value().get("activityId")))
+            .filter(r -> "task".equals(r.value().get("elementId")))
             .limit(2)
             .collect(Collectors.toList());
 

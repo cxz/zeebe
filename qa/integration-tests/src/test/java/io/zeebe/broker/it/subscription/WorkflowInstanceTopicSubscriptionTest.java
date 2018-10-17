@@ -90,7 +90,7 @@ public class WorkflowInstanceTopicSubscriptionTest {
     assertThat(event.getBpmnProcessId()).isEqualTo("process");
     assertThat(event.getVersion()).isEqualTo(1);
     assertThat(event.getWorkflowInstanceKey()).isEqualTo(workflowInstance.getWorkflowInstanceKey());
-    assertThat(event.getActivityId()).isEqualTo("process");
+    assertThat(event.getElementId()).isEqualTo("process");
     assertThat(event.getPayload()).isEqualTo("{\"foo\":123}");
   }
 

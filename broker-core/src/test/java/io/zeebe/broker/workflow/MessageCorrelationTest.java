@@ -18,8 +18,8 @@
 package io.zeebe.broker.workflow;
 
 import static io.zeebe.broker.test.EmbeddedBrokerConfigurator.setPartitionCount;
-import static io.zeebe.protocol.impl.record.value.workflowinstance.WorkflowInstanceRecord.PROP_WORKFLOW_ACTIVITY_ID;
 import static io.zeebe.protocol.impl.record.value.workflowinstance.WorkflowInstanceRecord.PROP_WORKFLOW_BPMN_PROCESS_ID;
+import static io.zeebe.protocol.impl.record.value.workflowinstance.WorkflowInstanceRecord.PROP_WORKFLOW_ELEMENT_ID;
 import static io.zeebe.protocol.impl.record.value.workflowinstance.WorkflowInstanceRecord.PROP_WORKFLOW_INSTANCE_KEY;
 import static io.zeebe.protocol.impl.record.value.workflowinstance.WorkflowInstanceRecord.PROP_WORKFLOW_VERSION;
 import static io.zeebe.test.broker.protocol.clientapi.TestPartitionClient.intent;
@@ -150,7 +150,7 @@ public class MessageCorrelationTest {
         .containsEntry(PROP_WORKFLOW_BPMN_PROCESS_ID, "wf")
         .containsEntry(PROP_WORKFLOW_VERSION, 1L)
         .containsEntry(PROP_WORKFLOW_INSTANCE_KEY, workflowInstanceKey)
-        .containsEntry(PROP_WORKFLOW_ACTIVITY_ID, "receive-message");
+        .containsEntry(PROP_WORKFLOW_ELEMENT_ID, "receive-message");
   }
 
   @Test
@@ -256,7 +256,7 @@ public class MessageCorrelationTest {
         .containsEntry(PROP_WORKFLOW_BPMN_PROCESS_ID, "wf")
         .containsEntry(PROP_WORKFLOW_VERSION, 1L)
         .containsEntry(PROP_WORKFLOW_INSTANCE_KEY, workflowInstanceKey)
-        .containsEntry(PROP_WORKFLOW_ACTIVITY_ID, "receive-message");
+        .containsEntry(PROP_WORKFLOW_ELEMENT_ID, "receive-message");
 
     final byte[] payload = (byte[]) event.value().get("payload");
     MsgPackUtil.assertEquality(payload, "{'orderId':'order-123', 'foo':'bar'}");
@@ -279,7 +279,7 @@ public class MessageCorrelationTest {
         .containsEntry(PROP_WORKFLOW_BPMN_PROCESS_ID, "wf")
         .containsEntry(PROP_WORKFLOW_VERSION, 1L)
         .containsEntry(PROP_WORKFLOW_INSTANCE_KEY, workflowInstanceKey)
-        .containsEntry(PROP_WORKFLOW_ACTIVITY_ID, "receive-message");
+        .containsEntry(PROP_WORKFLOW_ELEMENT_ID, "receive-message");
 
     final byte[] payload = (byte[]) event.value().get("payload");
     MsgPackUtil.assertEquality(payload, "{'orderId':'order-123', 'foo':'bar'}");
@@ -321,7 +321,7 @@ public class MessageCorrelationTest {
         .containsEntry(PROP_WORKFLOW_BPMN_PROCESS_ID, "wf")
         .containsEntry(PROP_WORKFLOW_VERSION, 1L)
         .containsEntry(PROP_WORKFLOW_INSTANCE_KEY, workflowInstanceKey)
-        .containsEntry(PROP_WORKFLOW_ACTIVITY_ID, "to-end");
+        .containsEntry(PROP_WORKFLOW_ELEMENT_ID, "to-end");
   }
 
   @Test
@@ -403,7 +403,7 @@ public class MessageCorrelationTest {
         testClient
             .receiveEvents()
             .filter(intent(WorkflowInstanceIntent.ELEMENT_COMPLETED))
-            .filter(r -> "receive-message".equals(r.value().get("activityId")))
+            .filter(r -> "receive-message".equals(r.value().get("elementId")))
             .limit(2)
             .collect(Collectors.toList());
 

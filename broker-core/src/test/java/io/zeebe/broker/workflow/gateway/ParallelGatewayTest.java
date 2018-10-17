@@ -96,13 +96,13 @@ public class ParallelGatewayTest {
             .receiveEvents()
             .ofTypeWorkflowInstance()
             .withIntent(WorkflowInstanceIntent.ELEMENT_ACTIVATED)
-            .filter(e -> isServiceTaskInProcess((String) e.value().get("activityId"), FORK_PROCESS))
+            .filter(e -> isServiceTaskInProcess((String) e.value().get("elementId"), FORK_PROCESS))
             .limit(2)
             .collect(Collectors.toList());
 
     assertThat(taskEvents).hasSize(2);
     assertThat(taskEvents)
-        .extracting(e -> e.value().get("activityId"))
+        .extracting(e -> e.value().get("elementId"))
         .containsExactlyInAnyOrder("task1", "task2");
     assertThat(taskEvents.get(0).key()).isNotEqualTo(taskEvents.get(1).key());
   }
@@ -127,7 +127,7 @@ public class ParallelGatewayTest {
             .collect(Collectors.toList());
 
     assertThat(completedEvents)
-        .extracting(e -> e.value().get("activityId"))
+        .extracting(e -> e.value().get("elementId"))
         .containsExactly("task1", "task2", PROCESS_ID);
   }
 
@@ -160,7 +160,7 @@ public class ParallelGatewayTest {
             .collect(Collectors.toList());
 
     assertThat(workflowInstanceEvents)
-        .extracting(e -> e.value().get("activityId"), e -> e.intent())
+        .extracting(e -> e.value().get("elementId"), e -> e.intent())
         .containsSubsequence(
             tuple("end", WorkflowInstanceIntent.END_EVENT_OCCURRED),
             tuple("end", WorkflowInstanceIntent.END_EVENT_OCCURRED),
@@ -182,7 +182,7 @@ public class ParallelGatewayTest {
             .receiveEvents()
             .ofTypeWorkflowInstance()
             .withIntent(WorkflowInstanceIntent.ELEMENT_ACTIVATED)
-            .filter(e -> isServiceTaskInProcess((String) e.value().get("activityId"), FORK_PROCESS))
+            .filter(e -> isServiceTaskInProcess((String) e.value().get("elementId"), FORK_PROCESS))
             .limit(2)
             .collect(Collectors.toList());
 
@@ -219,7 +219,7 @@ public class ParallelGatewayTest {
             .collect(Collectors.toList());
 
     assertThat(workflowInstanceEvents)
-        .extracting(e -> e.value().get("activityId"), e -> e.intent())
+        .extracting(e -> e.value().get("elementId"), e -> e.intent())
         .containsSequence(
             tuple("fork", WorkflowInstanceIntent.GATEWAY_ACTIVATED),
             tuple("flow2", WorkflowInstanceIntent.SEQUENCE_FLOW_TAKEN),
@@ -253,7 +253,7 @@ public class ParallelGatewayTest {
             .collect(Collectors.toList());
 
     assertThat(workflowInstanceEvents)
-        .extracting(e -> e.value().get("activityId"), e -> e.intent())
+        .extracting(e -> e.value().get("elementId"), e -> e.intent())
         .containsSequence(
             tuple("fork", WorkflowInstanceIntent.GATEWAY_ACTIVATED),
             tuple(PROCESS_ID, WorkflowInstanceIntent.ELEMENT_COMPLETING));
@@ -279,7 +279,7 @@ public class ParallelGatewayTest {
             .collect(Collectors.toList());
 
     assertThat(events)
-        .extracting(e -> e.value().get("activityId"), e -> e.intent())
+        .extracting(e -> e.value().get("elementId"), e -> e.intent())
         .containsSubsequence(
             tuple("flow1", WorkflowInstanceIntent.SEQUENCE_FLOW_TAKEN),
             tuple("join", WorkflowInstanceIntent.GATEWAY_ACTIVATED))
@@ -317,7 +317,7 @@ public class ParallelGatewayTest {
     testClient
         .receiveEvents()
         .ofTypeWorkflowInstance()
-        .limit(r -> "joinFlow1".equals(r.value().get("activityId")))
+        .limit(r -> "joinFlow1".equals(r.value().get("elementId")))
         .limit(2)
         .skip(1)
         .findFirst();
@@ -333,12 +333,12 @@ public class ParallelGatewayTest {
             .ofTypeWorkflowInstance()
             .limit(
                 r ->
-                    "join".equals(r.value().get("activityId"))
+                    "join".equals(r.value().get("elementId"))
                         && WorkflowInstanceIntent.GATEWAY_ACTIVATED == r.intent())
             .collect(Collectors.toList());
 
     assertThat(events)
-        .extracting(e -> e.value().get("activityId"), e -> e.intent())
+        .extracting(e -> e.value().get("elementId"), e -> e.intent())
         .containsSubsequence(
             tuple("joinFlow1", WorkflowInstanceIntent.SEQUENCE_FLOW_TAKEN),
             tuple("joinFlow1", WorkflowInstanceIntent.SEQUENCE_FLOW_TAKEN),
@@ -376,7 +376,7 @@ public class ParallelGatewayTest {
             .collect(Collectors.toList());
 
     assertThat(elementInstances)
-        .extracting(e -> e.value().get("activityId"))
+        .extracting(e -> e.value().get("elementId"))
         .contains(PROCESS_ID, "task1", "task2");
   }
 
@@ -405,7 +405,7 @@ public class ParallelGatewayTest {
     // then
     final Record<WorkflowInstanceRecordValue> completedEvent =
         RecordingExporter.workflowInstanceRecords(WorkflowInstanceIntent.ELEMENT_COMPLETED)
-            .withActivityId(PROCESS_ID)
+            .withElementId(PROCESS_ID)
             .getFirst();
 
     final String actualPayload = completedEvent.getValue().getPayload();
@@ -440,7 +440,7 @@ public class ParallelGatewayTest {
     // then
     final Record<WorkflowInstanceRecordValue> completedEvent =
         RecordingExporter.workflowInstanceRecords(WorkflowInstanceIntent.ELEMENT_COMPLETED)
-            .withActivityId(PROCESS_ID)
+            .withElementId(PROCESS_ID)
             .getFirst();
 
     final String actualPayload = completedEvent.getValue().getPayload();
@@ -481,7 +481,7 @@ public class ParallelGatewayTest {
     // then
     final Record<WorkflowInstanceRecordValue> completedEvent =
         RecordingExporter.workflowInstanceRecords(WorkflowInstanceIntent.ELEMENT_COMPLETED)
-            .withActivityId(PROCESS_ID)
+            .withElementId(PROCESS_ID)
             .getFirst();
 
     final String actualPayload = completedEvent.getValue().getPayload();
@@ -512,7 +512,7 @@ public class ParallelGatewayTest {
     // then
     final Record<WorkflowInstanceRecordValue> completedEvent =
         RecordingExporter.workflowInstanceRecords(WorkflowInstanceIntent.ELEMENT_COMPLETED)
-            .withActivityId(PROCESS_ID)
+            .withElementId(PROCESS_ID)
             .getFirst();
 
     final String actualPayload = completedEvent.getValue().getPayload();
@@ -542,7 +542,7 @@ public class ParallelGatewayTest {
     // then
     final Record<WorkflowInstanceRecordValue> completedEvent =
         RecordingExporter.workflowInstanceRecords(WorkflowInstanceIntent.ELEMENT_COMPLETED)
-            .withActivityId(PROCESS_ID)
+            .withElementId(PROCESS_ID)
             .getFirst();
 
     final String actualPayload = completedEvent.getValue().getPayload();
@@ -571,13 +571,13 @@ public class ParallelGatewayTest {
             .receiveEvents()
             .ofTypeWorkflowInstance()
             .withIntent(WorkflowInstanceIntent.ELEMENT_ACTIVATED)
-            .filter(e -> isServiceTaskInProcess((String) e.value().get("activityId"), process))
+            .filter(e -> isServiceTaskInProcess((String) e.value().get("elementId"), process))
             .limit(2)
             .collect(Collectors.toList());
 
     assertThat(taskEvents).hasSize(2);
     assertThat(taskEvents)
-        .extracting(e -> e.value().get("activityId"))
+        .extracting(e -> e.value().get("elementId"))
         .containsExactlyInAnyOrder("task1", "task2");
     assertThat(taskEvents.get(0).key()).isNotEqualTo(taskEvents.get(1).key());
   }

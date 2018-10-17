@@ -39,7 +39,7 @@ public interface WorkflowInstanceRecord extends Record {
   /**
    * @return the id of the current activity, or empty if the event does not belong to an activity.
    */
-  String getActivityId();
+  String getElementId();
 
   /** @return the payload of the workflow instance as JSON-formatted string. */
   String getPayload();

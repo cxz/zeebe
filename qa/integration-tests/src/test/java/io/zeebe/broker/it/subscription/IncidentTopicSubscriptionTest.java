@@ -92,8 +92,8 @@ public class IncidentTopicSubscriptionTest {
     assertThat(event.getErrorMessage()).isEqualTo("No data found for query $.foo.");
     assertThat(event.getBpmnProcessId()).isEqualTo("process");
     assertThat(event.getWorkflowInstanceKey()).isEqualTo(workflowInstance.getWorkflowInstanceKey());
-    assertThat(event.getActivityId()).isEqualTo("task");
-    assertThat(event.getActivityInstanceKey()).isGreaterThan(0);
+    assertThat(event.getElementId()).isEqualTo("task");
+    assertThat(event.getElementInstanceKey()).isGreaterThan(0);
     assertThat(event.getJobKey()).isNull();
   }
 
@@ -128,8 +128,8 @@ public class IncidentTopicSubscriptionTest {
     assertThat(event.getErrorMessage()).isEqualTo("No more retries left.");
     assertThat(event.getBpmnProcessId()).isNull();
     assertThat(event.getWorkflowInstanceKey()).isNull();
-    assertThat(event.getActivityId()).isNull();
-    assertThat(event.getActivityInstanceKey()).isNull();
+    assertThat(event.getElementId()).isNull();
+    assertThat(event.getElementInstanceKey()).isNull();
     assertThat(event.getJobKey()).isEqualTo(job.getKey());
   }
 

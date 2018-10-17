@@ -38,13 +38,13 @@ public interface IncidentRecord extends Record {
    * @return the id of the activity this incident belongs to. Can be <code>null</code> if the
    *     incident belongs to no activity or workflow instance.
    */
-  String getActivityId();
+  String getElementId();
 
   /**
    * @return the key of the activity instance this incident belongs to. Can be <code>null</code> if
    *     the incident belongs to no activity or workflow instance.
    */
-  Long getActivityInstanceKey();
+  Long getElementInstanceKey();
 
   /**
    * @return the key of the job this incident belongs to. Can be <code>null</code> if the incident

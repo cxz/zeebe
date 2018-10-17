@@ -91,7 +91,7 @@ public class UpdatePayloadTest {
             entry("version", (long) baseEvent.getVersion()),
             entry("workflowKey", baseEvent.getWorkflowKey()),
             entry("workflowInstanceKey", baseEvent.getWorkflowInstanceKey()),
-            entry("activityId", baseEvent.getActivityId()),
+            entry("elementId", baseEvent.getElementId()),
             entry("scopeInstanceKey", baseEvent.getScopeInstanceKey()),
             entry("payload", ENCODED_PAYLOAD));
 

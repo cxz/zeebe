@@ -91,7 +91,7 @@ public class EmbeddedSubProcessTest {
 
     final Map<String, Object> headers =
         (Map<String, Object>) jobCreatedEvent.value().get("headers");
-    assertThat(headers).containsEntry("activityId", "subProcessTask");
+    assertThat(headers).containsEntry("elementId", "subProcessTask");
   }
 
   @Test
@@ -110,7 +110,7 @@ public class EmbeddedSubProcessTest {
         testClient.receiveEvents().ofTypeWorkflowInstance().limit(11).collect(Collectors.toList());
 
     assertThat(workflowInstanceEvents)
-        .extracting(e -> e.intent(), e -> e.value().get("activityId"))
+        .extracting(e -> e.intent(), e -> e.value().get("elementId"))
         .containsExactly(
             tuple(WorkflowInstanceIntent.CREATED, PROCESS_ID),
             tuple(WorkflowInstanceIntent.ELEMENT_READY, PROCESS_ID),
@@ -146,7 +146,7 @@ public class EmbeddedSubProcessTest {
         testClient.receiveEvents().ofTypeWorkflowInstance().limit(21).collect(Collectors.toList());
 
     assertThat(workflowInstanceEvents)
-        .extracting(e -> e.intent(), e -> e.value().get("activityId"))
+        .extracting(e -> e.intent(), e -> e.value().get("elementId"))
         .containsExactly(
             tuple(WorkflowInstanceIntent.CREATED, PROCESS_ID),
             tuple(WorkflowInstanceIntent.ELEMENT_READY, PROCESS_ID),
@@ -196,7 +196,7 @@ public class EmbeddedSubProcessTest {
 
     final Map<String, Object> headers =
         (Map<String, Object>) jobCreatedEvent.value().get("headers");
-    assertThat(headers).containsEntry("activityId", "task");
+    assertThat(headers).containsEntry("elementId", "task");
   }
 
   @Test
@@ -327,12 +327,12 @@ public class EmbeddedSubProcessTest {
         testClient
             .receiveEvents()
             .ofTypeWorkflowInstance()
-            .filter(r -> elementFilter.contains(r.value().get("activityId")))
+            .filter(r -> elementFilter.contains(r.value().get("elementId")))
             .limit(12)
             .collect(Collectors.toList());
 
     assertThat(workflowInstanceEvents)
-        .extracting(e -> e.intent(), e -> e.value().get("activityId"))
+        .extracting(e -> e.intent(), e -> e.value().get("elementId"))
         .containsExactly(
             tuple(WorkflowInstanceIntent.ELEMENT_READY, "outerSubProcess"),
             tuple(WorkflowInstanceIntent.ELEMENT_ACTIVATED, "outerSubProcess"),
@@ -377,7 +377,7 @@ public class EmbeddedSubProcessTest {
     // then
     final Record<WorkflowInstanceRecordValue> completedEvent =
         RecordingExporter.workflowInstanceRecords(WorkflowInstanceIntent.ELEMENT_COMPLETING)
-            .withActivityId("subProcess")
+            .withElementId("subProcess")
             .getFirst();
 
     final String actualPayload = completedEvent.getValue().getPayload();

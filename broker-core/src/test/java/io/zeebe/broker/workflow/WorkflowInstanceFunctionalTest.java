@@ -17,8 +17,8 @@
  */
 package io.zeebe.broker.workflow;
 
-import static io.zeebe.protocol.impl.record.value.workflowinstance.WorkflowInstanceRecord.PROP_WORKFLOW_ACTIVITY_ID;
 import static io.zeebe.protocol.impl.record.value.workflowinstance.WorkflowInstanceRecord.PROP_WORKFLOW_BPMN_PROCESS_ID;
+import static io.zeebe.protocol.impl.record.value.workflowinstance.WorkflowInstanceRecord.PROP_WORKFLOW_ELEMENT_ID;
 import static io.zeebe.protocol.impl.record.value.workflowinstance.WorkflowInstanceRecord.PROP_WORKFLOW_INSTANCE_KEY;
 import static io.zeebe.protocol.impl.record.value.workflowinstance.WorkflowInstanceRecord.PROP_WORKFLOW_VERSION;
 import static io.zeebe.test.broker.protocol.brokerapi.DeploymentStubs.DEFAULT_PARTITION;
@@ -95,7 +95,7 @@ public class WorkflowInstanceFunctionalTest {
         .containsEntry(PROP_WORKFLOW_BPMN_PROCESS_ID, "process")
         .containsEntry(PROP_WORKFLOW_VERSION, 1L)
         .containsEntry(PROP_WORKFLOW_INSTANCE_KEY, workflowInstanceKey)
-        .containsEntry(PROP_WORKFLOW_ACTIVITY_ID, "foo");
+        .containsEntry(PROP_WORKFLOW_ELEMENT_ID, "foo");
   }
 
   @Test
@@ -123,7 +123,7 @@ public class WorkflowInstanceFunctionalTest {
         .containsEntry(PROP_WORKFLOW_BPMN_PROCESS_ID, "process")
         .containsEntry(PROP_WORKFLOW_VERSION, 1L)
         .containsEntry(PROP_WORKFLOW_INSTANCE_KEY, workflowInstanceKey)
-        .containsEntry(PROP_WORKFLOW_ACTIVITY_ID, "foo");
+        .containsEntry(PROP_WORKFLOW_ELEMENT_ID, "foo");
   }
 
   @Test
@@ -146,7 +146,7 @@ public class WorkflowInstanceFunctionalTest {
         .containsEntry(PROP_WORKFLOW_BPMN_PROCESS_ID, "process")
         .containsEntry(PROP_WORKFLOW_VERSION, 1L)
         .containsEntry(PROP_WORKFLOW_INSTANCE_KEY, workflowInstanceKey)
-        .containsEntry(PROP_WORKFLOW_ACTIVITY_ID, "foo");
+        .containsEntry(PROP_WORKFLOW_ELEMENT_ID, "foo");
   }
 
   @Test
@@ -169,7 +169,7 @@ public class WorkflowInstanceFunctionalTest {
         .containsEntry(PROP_WORKFLOW_BPMN_PROCESS_ID, "process")
         .containsEntry(PROP_WORKFLOW_VERSION, 1L)
         .containsEntry(PROP_WORKFLOW_INSTANCE_KEY, workflowInstanceKey)
-        .containsEntry(PROP_WORKFLOW_ACTIVITY_ID, "process");
+        .containsEntry(PROP_WORKFLOW_ELEMENT_ID, "process");
   }
 
   @Test
@@ -192,7 +192,7 @@ public class WorkflowInstanceFunctionalTest {
         .containsEntry(PROP_WORKFLOW_BPMN_PROCESS_ID, "process")
         .containsEntry(PROP_WORKFLOW_VERSION, 1L)
         .containsEntry(PROP_WORKFLOW_INSTANCE_KEY, workflowInstanceKey)
-        .containsEntry(PROP_WORKFLOW_ACTIVITY_ID, "process");
+        .containsEntry(PROP_WORKFLOW_ELEMENT_ID, "process");
   }
 
   @Test
@@ -221,7 +221,7 @@ public class WorkflowInstanceFunctionalTest {
         .containsEntry(PROP_WORKFLOW_BPMN_PROCESS_ID, "process")
         .containsEntry(PROP_WORKFLOW_VERSION, 1L)
         .containsEntry(PROP_WORKFLOW_INSTANCE_KEY, workflowInstanceKey)
-        .containsEntry(PROP_WORKFLOW_ACTIVITY_ID, "process");
+        .containsEntry(PROP_WORKFLOW_ELEMENT_ID, "process");
   }
 
   @Test
@@ -251,7 +251,7 @@ public class WorkflowInstanceFunctionalTest {
         .containsEntry(PROP_WORKFLOW_BPMN_PROCESS_ID, "process")
         .containsEntry(PROP_WORKFLOW_VERSION, 1L)
         .containsEntry(PROP_WORKFLOW_INSTANCE_KEY, workflowInstanceKey)
-        .containsEntry(PROP_WORKFLOW_ACTIVITY_ID, "foo");
+        .containsEntry(PROP_WORKFLOW_ELEMENT_ID, "foo");
   }
 
   @Test
@@ -303,7 +303,7 @@ public class WorkflowInstanceFunctionalTest {
         .containsEntry(PROP_WORKFLOW_INSTANCE_KEY, workflowInstanceKey)
         .containsEntry(PROP_WORKFLOW_BPMN_PROCESS_ID, "process")
         .containsEntry("workflowDefinitionVersion", 1L)
-        .containsEntry(PROP_WORKFLOW_ACTIVITY_ID, "foo")
+        .containsEntry(PROP_WORKFLOW_ELEMENT_ID, "foo")
         .containsKey("activityInstanceKey");
 
     final Map<String, Object> customHeaders =
@@ -345,7 +345,7 @@ public class WorkflowInstanceFunctionalTest {
         .containsEntry(PROP_WORKFLOW_BPMN_PROCESS_ID, "process")
         .containsEntry(PROP_WORKFLOW_VERSION, 1L)
         .containsEntry(PROP_WORKFLOW_INSTANCE_KEY, workflowInstanceKey)
-        .containsEntry(PROP_WORKFLOW_ACTIVITY_ID, "foo");
+        .containsEntry(PROP_WORKFLOW_ELEMENT_ID, "foo");
   }
 
   @Test
@@ -379,17 +379,17 @@ public class WorkflowInstanceFunctionalTest {
     SubscribedRecord endEvent =
         testClient.receiveFirstWorkflowInstanceEvent(
             workflowInstance1, WorkflowInstanceIntent.END_EVENT_OCCURRED);
-    assertThat(endEvent.value()).containsEntry(PROP_WORKFLOW_ACTIVITY_ID, "a");
+    assertThat(endEvent.value()).containsEntry(PROP_WORKFLOW_ELEMENT_ID, "a");
 
     endEvent =
         testClient.receiveFirstWorkflowInstanceEvent(
             workflowInstance2, WorkflowInstanceIntent.END_EVENT_OCCURRED);
-    assertThat(endEvent.value()).containsEntry(PROP_WORKFLOW_ACTIVITY_ID, "b");
+    assertThat(endEvent.value()).containsEntry(PROP_WORKFLOW_ELEMENT_ID, "b");
 
     endEvent =
         testClient.receiveFirstWorkflowInstanceEvent(
             workflowInstance3, WorkflowInstanceIntent.END_EVENT_OCCURRED);
-    assertThat(endEvent.value()).containsEntry(PROP_WORKFLOW_ACTIVITY_ID, "c");
+    assertThat(endEvent.value()).containsEntry(PROP_WORKFLOW_ELEMENT_ID, "c");
   }
 
   @Test
@@ -426,7 +426,7 @@ public class WorkflowInstanceFunctionalTest {
             .withIntent(WorkflowInstanceIntent.SEQUENCE_FLOW_TAKEN)
             .filter(r -> (Long) r.value().get("workflowInstanceKey") == workflowInstance1)
             .limit(3)
-            .map(s -> (String) s.value().get("activityId"))
+            .map(s -> (String) s.value().get("elementId"))
             .collect(Collectors.toList());
     assertThat(takenSequenceFlows).contains("s1").doesNotContain("s2");
 
@@ -436,7 +436,7 @@ public class WorkflowInstanceFunctionalTest {
             .withIntent(WorkflowInstanceIntent.SEQUENCE_FLOW_TAKEN)
             .filter(r -> (Long) r.value().get("workflowInstanceKey") == workflowInstance2)
             .limit(3)
-            .map(s -> (String) s.value().get("activityId"))
+            .map(s -> (String) s.value().get("elementId"))
             .collect(Collectors.toList());
     assertThat(takenSequenceFlows).contains("s2").doesNotContain("s1");
   }
@@ -483,7 +483,7 @@ public class WorkflowInstanceFunctionalTest {
             .collect(Collectors.toList());
 
     assertThat(gateWays.get(0).sourceRecordPosition()).isEqualTo(sequenceFlows.get(0).position());
-    assertThat(sequenceFlows.get(1).value().get("activityId")).isEqualTo("s1");
+    assertThat(sequenceFlows.get(1).value().get("elementId")).isEqualTo("s1");
     assertThat(gateWays.get(1).sourceRecordPosition()).isEqualTo(sequenceFlows.get(1).position());
 
     // when
@@ -511,7 +511,7 @@ public class WorkflowInstanceFunctionalTest {
             .collect(Collectors.toList());
 
     assertThat(gateWays.get(0).sourceRecordPosition()).isEqualTo(sequenceFlows.get(0).position());
-    assertThat(sequenceFlows.get(1).value().get("activityId")).isEqualTo("s2");
+    assertThat(sequenceFlows.get(1).value().get("elementId")).isEqualTo("s2");
     assertThat(gateWays.get(1).sourceRecordPosition()).isEqualTo(sequenceFlows.get(1).position());
   }
 
@@ -635,7 +635,7 @@ public class WorkflowInstanceFunctionalTest {
         .containsEntry(PROP_WORKFLOW_BPMN_PROCESS_ID, "yaml-workflow")
         .containsEntry(PROP_WORKFLOW_VERSION, 1L)
         .containsEntry(PROP_WORKFLOW_INSTANCE_KEY, workflowInstanceKey)
-        .containsEntry(PROP_WORKFLOW_ACTIVITY_ID, "yaml-workflow");
+        .containsEntry(PROP_WORKFLOW_ELEMENT_ID, "yaml-workflow");
   }
 
   /**

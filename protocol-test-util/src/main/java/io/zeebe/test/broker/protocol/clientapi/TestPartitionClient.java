@@ -450,7 +450,7 @@ public class TestPartitionClient {
     return receiveEvents()
         .ofTypeWorkflowInstance()
         .withIntent(intent)
-        .filter(r -> elementId.equals(r.value().get("activityId")))
+        .filter(r -> elementId.equals(r.value().get("elementId")))
         .findFirst()
         .get();
   }
@@ -461,7 +461,7 @@ public class TestPartitionClient {
         .ofTypeWorkflowInstance()
         .withIntent(intent)
         .filter(r -> (Long) r.value.get("workflowInstanceKey") == workflowInstanceKey)
-        .filter(r -> elementId.equals(r.value().get("activityId")))
+        .filter(r -> elementId.equals(r.value().get("elementId")))
         .findFirst()
         .get();
   }
@@ -481,12 +481,12 @@ public class TestPartitionClient {
   }
 
   public SubscribedRecord receiveFirstWorkflowInstanceEvent(
-      final long wfInstanceKey, final String activityId, final Intent intent) {
+      final long wfInstanceKey, final String elementId, final Intent intent) {
     return receiveEvents()
         .ofTypeWorkflowInstance()
         .withIntent(intent)
         .filter(r -> (Long) r.value().get("workflowInstanceKey") == wfInstanceKey)
-        .filter(r -> activityId.equals(r.value().get("activityId")))
+        .filter(r -> elementId.equals(r.value().get("elementId")))
         .findFirst()
         .get();
   }

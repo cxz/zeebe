@@ -324,11 +324,11 @@ public class ServiceTaskTest {
     waitUntil(
         () ->
             eventRecorder.hasElementInState(
-                wfEvent.getActivityId(), WorkflowInstanceState.ELEMENT_COMPLETED));
+                wfEvent.getElementId(), WorkflowInstanceState.ELEMENT_COMPLETED));
 
     final WorkflowInstanceEvent workflowEvent =
         eventRecorder.getElementInState(
-            wfEvent.getActivityId(), WorkflowInstanceState.ELEMENT_COMPLETED);
+            wfEvent.getElementId(), WorkflowInstanceState.ELEMENT_COMPLETED);
     assertThat(workflowEvent.getPayload()).isEqualTo("{\"foo\":\"bar\"}");
   }
 

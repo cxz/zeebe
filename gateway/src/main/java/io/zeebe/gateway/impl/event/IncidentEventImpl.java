@@ -50,9 +50,9 @@ public class IncidentEventImpl extends IncidentRecordImpl implements IncidentEve
     builder.append(", workflowInstanceKey=");
     builder.append(getWorkflowInstanceKey());
     builder.append(", activityId=");
-    builder.append(getActivityId());
+    builder.append(getElementId());
     builder.append(", activityInstanceKey=");
-    builder.append(getActivityInstanceKey());
+    builder.append(getElementInstanceKey());
     builder.append(", jobKey=");
     builder.append(getJobKey());
     builder.append("]");

@@ -63,7 +63,7 @@ public class WorkflowInstanceCommandImpl extends WorkflowInstanceRecordImpl
     builder.append(", version=");
     builder.append(getVersion());
     builder.append(", activityId=");
-    builder.append(getActivityId());
+    builder.append(getElementId());
     builder.append(", payload=");
     builder.append(getPayload());
     builder.append("]");

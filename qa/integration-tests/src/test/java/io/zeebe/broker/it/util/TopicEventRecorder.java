@@ -106,7 +106,7 @@ public class TopicEventRecorder extends ExternalResource {
     return wfInstanceEvents
         .stream()
         .filter(state(state))
-        .filter(r -> elementId.equals(r.getActivityId()))
+        .filter(r -> elementId.equals(r.getElementId()))
         .findFirst()
         .isPresent();
   }
@@ -120,7 +120,7 @@ public class TopicEventRecorder extends ExternalResource {
     return wfInstanceEvents
         .stream()
         .filter(state(state))
-        .filter(r -> elementId.equals(r.getActivityId()))
+        .filter(r -> elementId.equals(r.getElementId()))
         .collect(Collectors.toList());
   }
 
@@ -137,7 +137,7 @@ public class TopicEventRecorder extends ExternalResource {
     return wfInstanceEvents
         .stream()
         .filter(state(state))
-        .filter(r -> elementId.equals(r.getActivityId()))
+        .filter(r -> elementId.equals(r.getElementId()))
         .findFirst()
         .orElseThrow(() -> new AssertionError("no event found"));
   }

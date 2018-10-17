@@ -429,7 +429,7 @@ public class WorkflowInstanceStreamProcessorTest {
   }
 
   private Predicate<TypedRecord<WorkflowInstanceRecord>> isForElement(final String elementId) {
-    return r -> BufferUtil.wrapString(elementId).equals(r.getValue().getActivityId());
+    return r -> BufferUtil.wrapString(elementId).equals(r.getValue().getElementId());
   }
 
   private Predicate<TypedRecord<WorkflowInstanceRecord>> isForElement(

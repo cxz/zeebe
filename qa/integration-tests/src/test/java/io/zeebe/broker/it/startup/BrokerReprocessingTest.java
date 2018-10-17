@@ -617,7 +617,7 @@ public class BrokerReprocessingTest {
         eventRecorder.getSingleWorkflowInstanceEvent(WorkflowInstanceState.ELEMENT_COMPLETED);
 
     assertThat(event.getWorkflowInstanceKey()).isEqualTo(workflowInstanceKey);
-    assertThat(event.getActivityId()).isEqualTo("catch-event");
+    assertThat(event.getElementId()).isEqualTo("catch-event");
     assertThat(event.getPayloadAsMap())
         .containsOnly(entry("orderId", "order-123"), entry("foo", "bar"));
   }
@@ -648,7 +648,7 @@ public class BrokerReprocessingTest {
         eventRecorder.getSingleWorkflowInstanceEvent(WorkflowInstanceState.ELEMENT_COMPLETED);
 
     assertThat(event.getWorkflowInstanceKey()).isEqualTo(workflowInstanceKey);
-    assertThat(event.getActivityId()).isEqualTo("catch-event");
+    assertThat(event.getElementId()).isEqualTo("catch-event");
     assertThat(event.getPayloadAsMap())
         .containsOnly(entry("orderId", "order-123"), entry("foo", "bar"));
   }
